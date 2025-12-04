@@ -6,3 +6,7 @@
 @theme {
 	--font-sans: "Poppins", sans-serif;
 }
+
+.section {
+	@apply bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800;
+}
