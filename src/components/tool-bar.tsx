@@ -30,7 +30,7 @@ export const ToolBar = () => {
 				))}
 			</div>
 
-			<hr className='w-12 border-slate-500/50 my-2' />
+			<hr className='w-12 border-slate-200 dark:border-slate-800 my-2' />
 
 			<Button
 				onClick={toggleGrid}
