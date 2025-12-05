@@ -4,6 +4,7 @@ import { App } from './App.tsx'
 import './index.css'
 import { ColorProvider } from './contexts/color-context.tsx'
 import { GridProvider } from './contexts/grid-context.tsx'
+import { LayerProvider } from './contexts/layer-context.tsx'
 import { ThemeProvider } from './contexts/theme-context.tsx'
 import { ToolProvider } from './contexts/tool-context.tsx'
 
@@ -15,9 +16,11 @@ createRoot(root).render(
 		<ThemeProvider>
 			<ToolProvider>
 				<ColorProvider>
-					<GridProvider>
-						<App />
-					</GridProvider>
+					<LayerProvider>
+						<GridProvider>
+							<App />
+						</GridProvider>
+					</LayerProvider>
 				</ColorProvider>
 			</ToolProvider>
 		</ThemeProvider>

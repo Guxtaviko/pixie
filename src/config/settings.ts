@@ -1,4 +1,4 @@
-import type { Tool } from '../types'
+import type { Layer, Tool } from '../types'
 
 // Color settings
 export const DEFAULT_PALETTE = [
@@ -37,3 +37,11 @@ export const DEFAULT_ZOOM = 1
 export const MIN_ZOOM = 0.5
 export const MAX_ZOOM = 3
 export const ZOOM_STEP = 0.25
+
+// Layer settings
+export const DEFAULT_LAYER_OPTIONS: Omit<Layer, 'id' | 'name'> = {
+	isVisible: true,
+	isLocked: false,
+	opacity: 1,
+	data: [],
+}

@@ -40,7 +40,7 @@ export const Canvas = () => {
 		// Grid overlay
 		if (showGrid) {
 			const gridColor =
-				theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+				theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)'
 
 			ctx.strokeStyle = gridColor
 			ctx.lineWidth = 1
