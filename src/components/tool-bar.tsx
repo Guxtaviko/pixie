@@ -6,30 +6,44 @@ import {
 	Pipette as PickerIcon,
 	Trash2 as TrashIcon,
 } from 'lucide-react'
-import { useLocalStorage } from '../hooks'
-import { useColor } from '../hooks/use-color'
+import { ColorContext } from '../contexts/color-context'
+import { GridContext } from '../contexts/grid-context'
+import { ToolContext } from '../contexts/tool-context'
+import { UseHotkey, useSafeContext } from '../hooks'
+import type { Tool } from '../types'
 import { colorBrightness } from '../utils/color-brightness'
 import { Button } from './ui/button'
 import { ToolButton } from './ui/tool-button'
 
 const buttons = [
-	{ label: 'Pincel', icon: BrushIcon, hotKey: 'B' },
-	{ label: 'Borracha', icon: EraserIcon, hotKey: 'E' },
-	{ label: 'Balde', icon: PaintIcon, hotKey: 'G' },
-	{ label: 'Conta-gotas', icon: PickerIcon, hotKey: 'I' },
+	{ label: 'Pincel', icon: BrushIcon, hotKey: 'b', tool: 'brush' },
+	{ label: 'Borracha', icon: EraserIcon, hotKey: 'e', tool: 'eraser' },
+	{ label: 'Balde', icon: PaintIcon, hotKey: 'g', tool: 'fill' },
+	{ label: 'Conta-gotas', icon: PickerIcon, hotKey: 'i', tool: 'picker' },
 ]
 
 export const ToolBar = () => {
-	const [showGrid, setShowGrid] = useLocalStorage('canvas-show-grid', true)
-	const { primary, secondary, toggleActiveColor } = useColor()
+	const { showGrid, toggleGrid } = useSafeContext(GridContext)
+	const { primary, secondary, toggleActiveColor } = useSafeContext(ColorContext)
+	const { tool, setTool } = useSafeContext(ToolContext)
 
-	const toggleGrid = () => setShowGrid(!showGrid)
+	UseHotkey('g', () => setTool('fill'))
+	UseHotkey('b', () => setTool('brush'))
+	UseHotkey('e', () => setTool('eraser'))
+	UseHotkey('i', () => setTool('picker'))
 
 	return (
 		<aside className='w-20 border-r section flex flex-col items-center py-4 gap-4 z-10'>
 			<div className='flex flex-col items-center gap-4'>
-				{buttons.map(({ label, icon, hotKey }) => (
-					<ToolButton key={label} label={label} icon={icon} hotKey={hotKey} />
+				{buttons.map(({ label, icon, hotKey, tool: buttonTool }) => (
+					<ToolButton
+						key={label}
+						label={label}
+						icon={icon}
+						hotKey={hotKey}
+						isActive={tool === buttonTool}
+						onClick={() => setTool(buttonTool as Tool)}
+					/>
 				))}
 			</div>
 

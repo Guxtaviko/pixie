@@ -1,7 +1,9 @@
 import { createContext, useCallback } from 'react'
-import { DEFAULT_PALETTE } from '../config/settings'
-import { useLocalStorage } from '../hooks'
-import { UseHotkey } from '../hooks/use-hotkey'
+import {
+	DEFAULT_PRIMARY_COLOR,
+	DEFAULT_SECONDARY_COLOR,
+} from '../config/settings'
+import { UseHotkey, useLocalStorage } from '../hooks'
 
 type ColorContextType = {
 	primary: string
@@ -11,8 +13,8 @@ type ColorContextType = {
 }
 
 const ColorContext = createContext<ColorContextType>({
-	primary: DEFAULT_PALETTE[0],
-	secondary: DEFAULT_PALETTE[1],
+	primary: DEFAULT_PRIMARY_COLOR,
+	secondary: DEFAULT_SECONDARY_COLOR,
 	setColor: () => null,
 	toggleActiveColor: () => null,
 })
@@ -20,11 +22,11 @@ const ColorContext = createContext<ColorContextType>({
 const ColorProvider = ({ children }: { children: React.ReactNode }) => {
 	const [primary, setPrimary] = useLocalStorage<string>(
 		'primary-color',
-		DEFAULT_PALETTE[0],
+		DEFAULT_PRIMARY_COLOR,
 	)
 	const [secondary, setSecondary] = useLocalStorage<string>(
 		'secondary-color',
-		DEFAULT_PALETTE[1],
+		DEFAULT_SECONDARY_COLOR,
 	)
 
 	const toggleActiveColor = useCallback(() => {

@@ -8,11 +8,12 @@ import {
 	Undo2 as UndoIcon,
 } from 'lucide-react'
 import Logo from '../assets/logo.png'
-import { useTheme } from '../hooks'
+import { ThemeContext } from '../contexts'
+import { useSafeContext } from '../hooks'
 import { Button } from './ui/button'
 
 export const Header = () => {
-	const { theme, setTheme } = useTheme()
+	const { theme, setTheme } = useSafeContext(ThemeContext)
 	const toggleTheme = () => {
 		setTheme(theme === 'light' ? 'dark' : 'light')
 	}

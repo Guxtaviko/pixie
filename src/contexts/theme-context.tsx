@@ -1,7 +1,6 @@
 import { createContext, useEffect } from 'react'
 import { useLocalStorage } from '../hooks'
-
-export type Theme = 'light' | 'dark'
+import type { Theme } from '../types'
 
 type ThemeContextType = {
 	theme: Theme

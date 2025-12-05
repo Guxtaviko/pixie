@@ -31,7 +31,7 @@ export const ToolButton = ({
 			</Button>
 			<span className='absolute left-14 dark:bg-slate-800 bg-slate-200 text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap shadow-lg border border-slate-300 dark:border-slate-700 transform scale-y-0 group-hover:scale-y-100 transition-all flex items-center gap-2'>
 				{label}{' '}
-				<small className='text-cyan-500 w-4 h-4 inline-grid place-items-center rounded bg-slate-300 dark:bg-slate-700'>
+				<small className='text-cyan-500 w-4 h-4 inline-grid place-items-center rounded bg-slate-300 dark:bg-slate-700 uppercase'>
 					{hotKey}
 				</small>
 			</span>

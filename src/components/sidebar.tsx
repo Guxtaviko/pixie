@@ -13,7 +13,8 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { DEFAULT_PALETTE } from '../config/settings'
-import { useColor } from '../hooks/use-color'
+import { ColorContext } from '../contexts/color-context'
+import { useSafeContext } from '../hooks'
 import { colorBrightness } from '../utils/color-brightness'
 import { Button } from './ui/button'
 
@@ -24,7 +25,7 @@ const mockLayers = [
 ]
 
 export const Sidebar = () => {
-	const { primary: color, setColor } = useColor()
+	const { primary: color, setColor } = useSafeContext(ColorContext)
 	const [layer, setLayer] = useState<number>(mockLayers[0].id)
 
 	return (
