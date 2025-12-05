@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect } from 'react'
+import { createContext, useCallback } from 'react'
 import { DEFAULT_PALETTE } from '../config/settings'
 import { useLocalStorage } from '../hooks'
 import { UseHotkey } from '../hooks/use-hotkey'
