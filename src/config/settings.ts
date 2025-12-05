@@ -27,6 +27,11 @@ export const DEFAULT_SHOW_GRID = true
 export const MIN_GRID_SIZE = 4
 export const MAX_GRID_SIZE = 128
 
+// Canvas settings
+export const DEFAULT_PIXEL_SIZE = 24
+export const DARK_CHECKER = ['#1e293b', '#334155']
+export const LIGHT_CHECKER = ['#cbd5e1', '#e2e8f0']
+
 // Zoom settings
 export const DEFAULT_ZOOM = 1
 export const MIN_ZOOM = 0.5
