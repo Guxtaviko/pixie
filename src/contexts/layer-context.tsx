@@ -45,14 +45,17 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 			name: `Camada ${layers.length + 1}`,
 			...DEFAULT_LAYER_OPTIONS,
 		}
-		setLayers((prevLayers) => [layer, ...prevLayers])
+		setLayers((prevLayers) => [...prevLayers, layer])
 		setCurrentLayerId(layer.id)
 	}
 
 	const removeLayer = (id: string) => {
 		if (layers.length === 1) return // Prevent removing the last layer
+
 		setLayers((prevLayers) => prevLayers.filter((layer) => layer.id !== id))
-		if (currentLayerId === id) setCurrentLayerId(layers[0]?.id || null)
+
+		if (currentLayerId === id)
+			setCurrentLayerId(layers.find((layer) => layer.id !== id)?.id || null)
 	}
 
 	const toggleLayerVisibility = (id: string) => {
@@ -89,7 +92,7 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 			name: `${layerToClone.name} (cópia)`,
 		}
 
-		setLayers((prevLayers) => [clonedLayer, ...prevLayers])
+		setLayers((prevLayers) => [...prevLayers, clonedLayer])
 		setCurrentLayerId(clonedLayer.id)
 	}
 

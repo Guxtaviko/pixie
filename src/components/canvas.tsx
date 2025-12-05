@@ -1,25 +1,56 @@
-import { useCallback, useEffect, useRef } from 'react'
-import {
-	DARK_CHECKER,
-	DEFAULT_PIXEL_SIZE,
-	DEFAULT_ZOOM,
-	LIGHT_CHECKER,
-} from '../config/settings'
+import type React from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { DARK_CHECKER, DEFAULT_ZOOM, LIGHT_CHECKER } from '../config/settings'
 import { ThemeContext } from '../contexts'
 import { GridContext } from '../contexts/grid-context'
+import { LayerContext } from '../contexts/layer-context'
 import { useLocalStorage, useSafeContext } from '../hooks'
+import { UsePixie } from '../hooks/use-pixie'
 import { CanvasZoom } from './ui/canvas-zoom'
 
 export const Canvas = () => {
-	const { width, height, showGrid } = useSafeContext(GridContext)
+	const { width, height, showGrid, pixelSize } = useSafeContext(GridContext)
 	const { theme } = useSafeContext(ThemeContext)
+	const { layers } = useSafeContext(LayerContext)
 	const [zoom, setZoom] = useLocalStorage<number>('canvas-zoom', DEFAULT_ZOOM)
+	const [isDrawing, setIsDrawing] = useState<boolean>(false)
 	const canvasRef = useRef<HTMLCanvasElement>(null)
-
-	const pixelSize = DEFAULT_PIXEL_SIZE
+	const { handleInteraction } = UsePixie()
 
 	const canvasWidth = width * pixelSize
 	const canvasHeight = height * pixelSize
+
+	const getCoordinates = useCallback(
+		(e: React.MouseEvent | MouseEvent) => {
+			const canvas = canvasRef.current
+			if (!canvas) return null
+
+			const rect = canvas.getBoundingClientRect()
+			const x = Math.floor((e.clientX - rect.left) / pixelSize)
+			const y = Math.floor((e.clientY - rect.top) / pixelSize)
+
+			return { x, y }
+		},
+		[pixelSize],
+	)
+
+	const handleStart = (e: React.MouseEvent) => {
+		setIsDrawing(true)
+		const coords = getCoordinates(e)
+		if (!coords) return
+		handleInteraction(coords.x, coords.y)
+	}
+
+	const handleMove = (e: React.MouseEvent) => {
+		if (!isDrawing) return
+		const coords = getCoordinates(e)
+		if (!coords) return
+		handleInteraction(coords.x, coords.y)
+	}
+
+	const handleEnd = () => {
+		setIsDrawing(false)
+	}
 
 	const draw = useCallback(() => {
 		const canvas = canvasRef.current
@@ -36,6 +67,22 @@ export const Canvas = () => {
 				ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize)
 			}
 		}
+
+		// Layers
+		layers.forEach((layer) => {
+			if (!layer.isVisible) return
+
+			ctx.globalAlpha = layer.opacity
+			for (let y = 0; y < height; y++) {
+				for (let x = 0; x < width; x++) {
+					const color = layer.data[y]?.[x]
+					if (color) {
+						ctx.fillStyle = color
+						ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize)
+					}
+				}
+			}
+		})
 
 		// Grid overlay
 		if (showGrid) {
@@ -61,7 +108,7 @@ export const Canvas = () => {
 				ctx.stroke()
 			}
 		}
-	}, [width, height, showGrid, theme, pixelSize])
+	}, [width, height, showGrid, theme, pixelSize, layers])
 
 	useEffect(() => {
 		draw()
@@ -77,6 +124,10 @@ export const Canvas = () => {
 					ref={canvasRef}
 					width={canvasWidth}
 					height={canvasHeight}
+					onMouseDown={handleStart}
+					onMouseMove={handleMove}
+					onMouseUp={handleEnd}
+					onMouseLeave={handleEnd}
 					className='block bg-slate-950'
 				/>
 			</div>

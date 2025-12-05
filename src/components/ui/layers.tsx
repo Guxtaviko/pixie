@@ -60,60 +60,62 @@ export const Layers = () => {
 				</Button>
 			</div>
 			<div className='flex flex-col gap-1'>
-				{layers.map((layer) => (
-					<Button
-						key={layer.id}
-						onClick={() => setCurrentLayerId(layer.id)}
-						className={`flex items-center p-2 rounded-lg border transition-all group ${
-							currentLayerId === layer.id
-								? 'border-cyan-500 bg-cyan-500/10'
-								: 'border-transparent hover:bg-slate-200 dark:hover:bg-slate-800'
-						}`}
-					>
+				{layers
+					.map((layer) => (
 						<Button
-							onClick={(e) => handleVisibilityToggle(e, layer.id)}
-							className='p-1.5 hover:bg-slate-500/25 text-slate-700 dark:text-slate-300 rounded transition-colors'
+							key={layer.id}
+							onClick={() => setCurrentLayerId(layer.id)}
+							className={`flex items-center p-2 rounded-lg border transition-all group ${
+								currentLayerId === layer.id
+									? 'border-cyan-500 bg-cyan-500/10'
+									: 'border-transparent hover:bg-slate-200 dark:hover:bg-slate-800'
+							}`}
 						>
-							{layer.isVisible ? (
-								<VisibleIcon size={14} />
-							) : (
-								<HiddenIcon size={14} className='text-slate-500' />
-							)}
-						</Button>
-						<Button
-							onClick={(e) => handleLockToggle(e, layer.id)}
-							className='p-1.5 hover:bg-slate-500/25 text-slate-700 dark:text-slate-300 rounded transition-colors'
-						>
-							{layer.isLocked ? (
-								<LockIcon size={14} className='text-cyan-500' />
-							) : (
-								<UnlockIcon size={14} />
-							)}
-						</Button>
-						<input
-							id={`layer-${layer.id}-name`}
-							onChange={(e) => {
-								updateLayer(layer.id, { name: e.currentTarget.value })
-							}}
-							value={layer.name}
-							className='ml-2 flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap outline-none bg-transparent text-left text-sm'
-						/>
-						<Button
-							onClick={(e) => handleClone(e, layer.id)}
-							className='p-1.5 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 opacity-0 group-hover:opacity-100 rounded transition-colors'
-						>
-							<CloneIcon size={14} />
-						</Button>
-						{layers.length > 1 && (
 							<Button
-								onClick={(e) => handleRemove(e, layer.id)}
-								className='p-1.5 text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 rounded transition-colors'
+								onClick={(e) => handleVisibilityToggle(e, layer.id)}
+								className='p-1.5 hover:bg-slate-500/25 text-slate-700 dark:text-slate-300 rounded transition-colors'
 							>
-								<DeleteIcon size={14} />
+								{layer.isVisible ? (
+									<VisibleIcon size={14} />
+								) : (
+									<HiddenIcon size={14} className='text-slate-500' />
+								)}
 							</Button>
-						)}
-					</Button>
-				))}
+							<Button
+								onClick={(e) => handleLockToggle(e, layer.id)}
+								className='p-1.5 hover:bg-slate-500/25 text-slate-700 dark:text-slate-300 rounded transition-colors'
+							>
+								{layer.isLocked ? (
+									<LockIcon size={14} className='text-cyan-500' />
+								) : (
+									<UnlockIcon size={14} />
+								)}
+							</Button>
+							<input
+								id={`layer-${layer.id}-name`}
+								onChange={(e) => {
+									updateLayer(layer.id, { name: e.currentTarget.value })
+								}}
+								value={layer.name}
+								className='ml-2 flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap outline-none bg-transparent text-left text-sm'
+							/>
+							<Button
+								onClick={(e) => handleClone(e, layer.id)}
+								className='p-1.5 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 opacity-0 group-hover:opacity-100 rounded transition-colors'
+							>
+								<CloneIcon size={14} />
+							</Button>
+							{layers.length > 1 && (
+								<Button
+									onClick={(e) => handleRemove(e, layer.id)}
+									className='p-1.5 text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 rounded transition-colors'
+								>
+									<DeleteIcon size={14} />
+								</Button>
+							)}
+						</Button>
+					))
+					.reverse()}
 			</div>
 		</div>
 	)

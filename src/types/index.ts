@@ -8,5 +8,5 @@ export type Layer = {
 	isVisible: boolean
 	isLocked: boolean
 	opacity: number
-	data: number[][]
+	data: string[][]
 }
