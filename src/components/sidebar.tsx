@@ -9,25 +9,13 @@ import {
 	Plus as PlusIcon,
 	LockOpen as UnlockIcon,
 	Eye as VisibleIcon,
+	Zap as ZapIcon,
 } from 'lucide-react'
 import { useState } from 'react'
+import { DEFAULT_PALETTE } from '../config/settings'
+import { useColor } from '../hooks/use-color'
 import { colorBrightness } from '../utils/color-brightness'
 import { Button } from './ui/button'
-
-const DEFAULT_PALETTE = [
-	'#f8fafc',
-	'#ef4444',
-	'#f97316',
-	'#eab308',
-	'#22c55e',
-	'#06b6d4',
-	'#3b82f6',
-	'#8b5cf6',
-	'#d946ef',
-	'#f43f5e',
-	'#78350f',
-	'#000000',
-]
 
 const mockLayers = [
 	{ id: 1, name: 'Layer 1', locked: false, visible: true },
@@ -36,7 +24,7 @@ const mockLayers = [
 ]
 
 export const Sidebar = () => {
-	const [color, setColor] = useState<string>(DEFAULT_PALETTE[0])
+	const { primary: color, setColor } = useColor()
 	const [layer, setLayer] = useState<number>(mockLayers[0].id)
 
 	return (
@@ -122,6 +110,15 @@ export const Sidebar = () => {
 					))}
 				</div>
 			</div>
+			<a
+				href='https://github.com/guxtaviko'
+				target='_blank'
+				rel='noopener noreferrer'
+				className='mt-auto mx-auto text-sm flex gap-2 items-center justify-center text-cyan-400 transition-transform hover:scale-105 font-medium w-fit px-2'
+			>
+				<ZapIcon size={14} className='text-cyan-400' />
+				Guxtaviko
+			</a>
 		</aside>
 	)
 }

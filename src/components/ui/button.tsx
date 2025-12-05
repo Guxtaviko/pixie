@@ -7,7 +7,7 @@ export const Button = ({
 	return (
 		<button
 			type='button'
-			className={`cursor-pointer disabled:cursor-default ${className}`}
+			className={`cursor-pointer disabled:cursor-default ${className} outline-none`}
 			{...props}
 		/>
 	)

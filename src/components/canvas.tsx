@@ -1,5 +1,5 @@
 import { ZoomIn as ZoomInIcon, ZoomOut as ZoomOutIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useLocalStorage } from '../hooks'
 import { Button } from './ui/button'
 
 const maxZoom = 3
@@ -7,7 +7,7 @@ const minZoom = 0.5
 const zoomStep = 0.25
 
 export const Canvas = () => {
-	const [zoom, setZoom] = useState(1)
+	const [zoom, setZoom] = useLocalStorage<number>('canvas-zoom', 1)
 
 	const increaseZoom = () => {
 		setZoom((prevZoom) => Math.min(prevZoom + zoomStep, maxZoom)) // Limita o zoom máximo a 3x

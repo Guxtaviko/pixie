@@ -6,7 +6,9 @@ import {
 	Pipette as PickerIcon,
 	Trash2 as TrashIcon,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useLocalStorage } from '../hooks'
+import { useColor } from '../hooks/use-color'
+import { colorBrightness } from '../utils/color-brightness'
 import { Button } from './ui/button'
 import { ToolButton } from './ui/tool-button'
 
@@ -18,7 +20,8 @@ const buttons = [
 ]
 
 export const ToolBar = () => {
-	const [showGrid, setShowGrid] = useState(true)
+	const [showGrid, setShowGrid] = useLocalStorage('canvas-show-grid', true)
+	const { primary, secondary, toggleActiveColor } = useColor()
 
 	const toggleGrid = () => setShowGrid(!showGrid)
 
@@ -42,6 +45,18 @@ export const ToolBar = () => {
 			>
 				<GridIcon size={20} />
 			</Button>
+
+			<div className='relative w-11 h-11'>
+				<Button
+					className={`w-9 h-9 rounded-lg border-2 absolute top-0 left-0 z-20 ${colorBrightness(primary) === 'dark' ? 'border-slate-100' : 'border-slate-900'}`}
+					style={{ backgroundColor: primary }}
+				/>
+				<Button
+					onClick={toggleActiveColor}
+					className='w-9 h-9 rounded-lg border-2 border-slate-200 dark:border-slate-800 absolute bottom-0 right-0 z-10'
+					style={{ backgroundColor: secondary }}
+				/>
+			</div>
 
 			<Button className='mt-auto p-3 text-red-400 hover:bg-red-500/15 hover:text-red-500 rounded-xl transition-all'>
 				<TrashIcon size={20} />
