@@ -8,9 +8,9 @@ import {
 } from 'lucide-react'
 import { ColorContext } from '../contexts/color-context'
 import { GridContext } from '../contexts/grid-context'
+import { LayerContext } from '../contexts/layer-context'
 import { ToolContext } from '../contexts/tool-context'
 import { UseHotkey, useSafeContext } from '../hooks'
-import { UsePixie } from '../hooks/use-pixie'
 import type { Tool } from '../types'
 import { colorBrightness } from '../utils/color-brightness'
 import { Button } from './ui/button'
@@ -27,7 +27,7 @@ export const ToolBar = () => {
 	const { showGrid, toggleGrid } = useSafeContext(GridContext)
 	const { primary, secondary, toggleActiveColor } = useSafeContext(ColorContext)
 	const { tool, setTool } = useSafeContext(ToolContext)
-	const { clearCanvas } = UsePixie()
+	const { clearLayers } = useSafeContext(LayerContext)
 
 	UseHotkey('g', () => setTool('fill'))
 	UseHotkey('b', () => setTool('brush'))
@@ -75,7 +75,7 @@ export const ToolBar = () => {
 			</div>
 
 			<Button
-				onClick={clearCanvas}
+				onClick={clearLayers}
 				className='mt-auto p-3 text-red-400 hover:bg-red-500/15 hover:text-red-500 rounded-xl transition-all'
 			>
 				<TrashIcon size={20} />

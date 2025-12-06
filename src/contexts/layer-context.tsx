@@ -13,6 +13,7 @@ type LayerContextType = {
 	toggleLayerLock: (id: string) => void
 	updateLayer: (id: string, updatedLayer: Partial<Layer>) => void
 	cloneLayer: (id: string) => void
+	clearLayers: () => void
 }
 
 const LayerContext = createContext<LayerContextType>({
@@ -25,6 +26,7 @@ const LayerContext = createContext<LayerContextType>({
 	toggleLayerLock: () => null,
 	updateLayer: () => null,
 	cloneLayer: () => null,
+	clearLayers: () => null,
 })
 
 const LayerProvider = ({ children }: { children: React.ReactNode }) => {
@@ -35,7 +37,8 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 			...DEFAULT_LAYER_OPTIONS,
 		},
 	])
-	const [currentLayerId, setCurrentLayerId] = useState<string | null>(
+	const [currentLayerId, setCurrentLayerId] = useLocalStorage<string | null>(
+		'current-layer-id',
 		layers[0]?.id || null,
 	)
 
@@ -96,6 +99,12 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 		setCurrentLayerId(clonedLayer.id)
 	}
 
+	const clearLayers = () => {
+		setLayers((prevLayers) =>
+			prevLayers.map((layer) => ({ ...layer, data: [] })),
+		)
+	}
+
 	return (
 		<LayerContext.Provider
 			value={{
@@ -108,6 +117,7 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 				toggleLayerLock,
 				updateLayer,
 				cloneLayer,
+				clearLayers,
 			}}
 		>
 			{children}
