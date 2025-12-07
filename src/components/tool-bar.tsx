@@ -6,14 +6,15 @@ import {
 	Pipette as PickerIcon,
 	Trash2 as TrashIcon,
 } from 'lucide-react'
+import { useState } from 'react'
 import { ColorContext } from '../contexts/color-context'
 import { GridContext } from '../contexts/grid-context'
 import { LayerContext } from '../contexts/layer-context'
 import { ToolContext } from '../contexts/tool-context'
 import { UseHotkey, useSafeContext } from '../hooks'
 import type { Tool } from '../types'
-import { colorBrightness } from '../utils/color-brightness'
 import { Button } from './ui/button'
+import { ColorSelector } from './ui/color-selector'
 import { ToolButton } from './ui/tool-button'
 
 const buttons = [
@@ -24,6 +25,8 @@ const buttons = [
 ]
 
 export const ToolBar = () => {
+	const [isColorSelectorOpen, setIsColorSelectorOpen] = useState(false)
+
 	const { showGrid, toggleGrid } = useSafeContext(GridContext)
 	const { primary, secondary, toggleActiveColor } = useSafeContext(ColorContext)
 	const { tool, setTool } = useSafeContext(ToolContext)
@@ -33,6 +36,8 @@ export const ToolBar = () => {
 	UseHotkey('b', () => setTool('brush'))
 	UseHotkey('e', () => setTool('eraser'))
 	UseHotkey('i', () => setTool('picker'))
+
+	const toggleColorSelector = () => setIsColorSelectorOpen(!isColorSelectorOpen)
 
 	return (
 		<aside className='w-20 border-r section flex flex-col items-center py-4 gap-4 z-10'>
@@ -64,7 +69,8 @@ export const ToolBar = () => {
 
 			<div className='relative w-11 h-11'>
 				<Button
-					className={`w-9 h-9 rounded-lg border-2 absolute top-0 left-0 z-20 ${colorBrightness(primary) === 'dark' ? 'border-slate-100' : 'border-slate-900'}`}
+					onClick={toggleColorSelector}
+					className='w-9 h-9 rounded-lg border-2 absolute top-0 left-0 z-20 border-slate-900 dark:border-slate-100'
 					style={{ backgroundColor: primary }}
 				/>
 				<Button
@@ -72,6 +78,11 @@ export const ToolBar = () => {
 					className='w-9 h-9 rounded-lg border-2 border-slate-200 dark:border-slate-800 absolute bottom-0 right-0 z-10'
 					style={{ backgroundColor: secondary }}
 				/>
+				{isColorSelectorOpen && (
+					<div className='absolute top-0 left-12 z-30'>
+						<ColorSelector handleClose={() => setIsColorSelectorOpen(false)} />
+					</div>
+				)}
 			</div>
 
 			<Button
