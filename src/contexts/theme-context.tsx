@@ -8,14 +8,15 @@ type ThemeContextType = {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-	theme: window.matchMedia('(prefers-color-scheme: dark)').matches
-		? 'dark'
-		: 'light',
+	theme: 'light',
 	setTheme: () => null,
 })
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-	const [theme, setTheme] = useLocalStorage<Theme>('theme', 'light')
+	const initalTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+		? 'dark'
+		: 'light'
+	const [theme, setTheme] = useLocalStorage<Theme>('theme', initalTheme)
 
 	useEffect(() => {
 		const isDark = theme === 'dark'
