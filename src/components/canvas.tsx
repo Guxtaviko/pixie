@@ -15,7 +15,7 @@ export const Canvas = () => {
 	const [zoom, setZoom] = useLocalStorage<number>('canvas-zoom', DEFAULT_ZOOM)
 	const [isDrawing, setIsDrawing] = useState<boolean>(false)
 	const canvasRef = useRef<HTMLCanvasElement>(null)
-	const { handleInteraction } = UsePixie()
+	const { handleInteraction, endDrawing } = UsePixie()
 
 	const canvasWidth = width * pixelSize
 	const canvasHeight = height * pixelSize
@@ -38,6 +38,8 @@ export const Canvas = () => {
 	)
 
 	const handleStart = (e: React.MouseEvent) => {
+		e.preventDefault()
+
 		setIsDrawing(true)
 		const coords = getCoordinates(e)
 		if (!coords) return
@@ -46,6 +48,8 @@ export const Canvas = () => {
 
 	const handleMove = (e: React.MouseEvent) => {
 		if (!isDrawing) return
+		e.preventDefault()
+
 		const coords = getCoordinates(e)
 		if (!coords) return
 		handleInteraction(coords.x, coords.y)
@@ -53,6 +57,9 @@ export const Canvas = () => {
 
 	const handleEnd = () => {
 		setIsDrawing(false)
+		if (!isDrawing) return
+
+		endDrawing()
 	}
 
 	const draw = useCallback(() => {

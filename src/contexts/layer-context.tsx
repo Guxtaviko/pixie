@@ -1,10 +1,12 @@
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect } from 'react'
 import { DEFAULT_LAYER_OPTIONS } from '../config/settings'
-import { useLocalStorage } from '../hooks'
+import { useLocalStorage, useSafeContext } from '../hooks'
 import type { Layer } from '../types'
+import { HistoryContext } from './history-context'
 
 type LayerContextType = {
 	layers: Layer[]
+	setLayers: (layers: Layer[]) => void
 	currentLayerId: string | null
 	setCurrentLayerId: (id: string | null) => void
 	addLayer: () => void
@@ -18,6 +20,7 @@ type LayerContextType = {
 
 const LayerContext = createContext<LayerContextType>({
 	layers: [],
+	setLayers: () => {},
 	currentLayerId: null,
 	setCurrentLayerId: () => null,
 	addLayer: () => null,
@@ -41,6 +44,11 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 		'current-layer-id',
 		layers[0]?.id || null,
 	)
+	const { saveToHistory, history } = useSafeContext(HistoryContext)
+
+	useEffect(() => {
+		if (history.length === 0) saveToHistory(layers)
+	}, [history, layers, saveToHistory])
 
 	const addLayer = () => {
 		const layer: Layer = {
@@ -48,17 +56,24 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 			name: `Camada ${layers.length + 1}`,
 			...DEFAULT_LAYER_OPTIONS,
 		}
-		setLayers((prevLayers) => [...prevLayers, layer])
+		const newLayers = [...layers, layer]
+
+		setLayers(newLayers)
 		setCurrentLayerId(layer.id)
+
+		saveToHistory(newLayers)
 	}
 
 	const removeLayer = (id: string) => {
 		if (layers.length === 1) return // Prevent removing the last layer
 
-		setLayers((prevLayers) => prevLayers.filter((layer) => layer.id !== id))
+		const newLayers = layers.filter((layer) => layer.id !== id)
+		setLayers(newLayers)
 
 		if (currentLayerId === id)
-			setCurrentLayerId(layers.find((layer) => layer.id !== id)?.id || null)
+			setCurrentLayerId(newLayers.find((layer) => layer.id !== id)?.id || null)
+
+		saveToHistory(newLayers)
 	}
 
 	const toggleLayerVisibility = (id: string) => {
@@ -109,6 +124,7 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 		<LayerContext.Provider
 			value={{
 				layers,
+				setLayers,
 				currentLayerId,
 				setCurrentLayerId,
 				addLayer,

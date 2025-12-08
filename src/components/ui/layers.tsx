@@ -61,10 +61,12 @@ export const Layers = () => {
 			</div>
 			<div className='flex flex-col gap-1'>
 				{layers
-					.map((layer) => (
-						<Button
+					.map((layer, i) => (
+						// biome-ignore lint/a11y: button inside button situation
+						<div
 							key={layer.id}
 							onClick={() => setCurrentLayerId(layer.id)}
+							tabIndex={i}
 							className={`flex items-center p-2 rounded-lg border transition-all group ${
 								currentLayerId === layer.id
 									? 'border-cyan-500 bg-cyan-500/10'
@@ -113,7 +115,7 @@ export const Layers = () => {
 									<DeleteIcon size={14} />
 								</Button>
 							)}
-						</Button>
+						</div>
 					))
 					.reverse()}
 			</div>

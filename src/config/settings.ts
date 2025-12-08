@@ -18,9 +18,6 @@ export const DEFAULT_PALETTE = [
 export const DEFAULT_PRIMARY_COLOR = DEFAULT_PALETTE[0]
 export const DEFAULT_SECONDARY_COLOR = DEFAULT_PALETTE[11]
 
-// Tool settings
-export const DEFAULT_TOOL: Tool = 'brush'
-
 // Grid settings
 export const DEFAULT_GRID_SIZE = 16
 export const DEFAULT_SHOW_GRID = true
@@ -45,3 +42,7 @@ export const DEFAULT_LAYER_OPTIONS: Omit<Layer, 'id' | 'name'> = {
 	opacity: 1,
 	data: [],
 }
+
+// Other settings
+export const DEFAULT_TOOL: Tool = 'brush'
+export const MAX_HISTORY_LENGTH = 30

@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { ColorContext } from '../contexts/color-context'
 import { GridContext } from '../contexts/grid-context'
+import { HistoryContext } from '../contexts/history-context'
 import { LayerContext } from '../contexts/layer-context'
 import { ToolContext } from '../contexts/tool-context'
 import { useSafeContext } from './use-safe-context'
@@ -10,6 +11,7 @@ export function UsePixie() {
 	const { primary, setColor } = useSafeContext(ColorContext)
 	const { width, height } = useSafeContext(GridContext)
 	const { layers, currentLayerId, updateLayer } = useSafeContext(LayerContext)
+	const { saveToHistory } = useSafeContext(HistoryContext)
 
 	const layer = layers.find((l) => l.id === currentLayerId)
 	const isLayerDrawable = layer && !layer.isLocked
@@ -87,15 +89,21 @@ export function UsePixie() {
 				)
 			}
 
+			const newLayers = layers.map((l) =>
+				l.id === layer.id ? { ...l, data: layerData } : l,
+			)
 			updateLayer(layer.id, { data: layerData })
+			saveToHistory(newLayers)
 		},
 		[
-			validateCoordinates,
-			isLayerDrawable,
-			getLayerData,
-			primary,
-			updateLayer,
+			layers,
 			layer,
+			isLayerDrawable,
+			primary,
+			saveToHistory,
+			validateCoordinates,
+			getLayerData,
+			updateLayer,
 		],
 	)
 
@@ -138,5 +146,14 @@ export function UsePixie() {
 		[tool, drawPixel, floodFill, pickColor],
 	)
 
-	return { handleInteraction }
+	const endDrawing = useCallback(() => {
+		if (!['brush', 'eraser'].includes(tool)) return
+
+		const newLayers = layers.map((l) =>
+			l.id === layer?.id ? { ...l, data: getLayerData() } : l,
+		)
+		saveToHistory(newLayers)
+	}, [layers, layer, getLayerData, saveToHistory, tool])
+
+	return { handleInteraction, endDrawing }
 }

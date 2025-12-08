@@ -23,6 +23,7 @@ const GridContext = createContext<GridContextType>({
 	toggleGrid: () => {},
 	setSize: (_width: number, _height: number) => {},
 })
+
 const GridProvider = ({ children }: { children: React.ReactNode }) => {
 	const [width, setWidth] = useLocalStorage<number>(
 		'grid-width',

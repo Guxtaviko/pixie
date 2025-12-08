@@ -9,14 +9,45 @@ import {
 } from 'lucide-react'
 import Logo from '../assets/logo.png'
 import { ThemeContext } from '../contexts'
-import { useSafeContext } from '../hooks'
+import { HistoryContext } from '../contexts/history-context'
+import { LayerContext } from '../contexts/layer-context'
+import { UseHotkey, useSafeContext } from '../hooks'
+import type { Layer } from '../types'
 import { Button } from './ui/button'
 
 export const Header = () => {
+	const { canUndo, undo, canRedo, redo } = useSafeContext(HistoryContext)
+	const { setLayers, setCurrentLayerId, currentLayerId } =
+		useSafeContext(LayerContext)
 	const { theme, setTheme } = useSafeContext(ThemeContext)
 	const toggleTheme = () => {
 		setTheme(theme === 'light' ? 'dark' : 'light')
 	}
+
+	const setLayerId = (layers: Layer[]) => {
+		if (!layers.find((l) => l.id === currentLayerId)) {
+			setCurrentLayerId(layers[0]?.id || null)
+		}
+	}
+
+	const handleUndo = () => {
+		const restoredLayers = undo()
+		if (!restoredLayers) return
+
+		setLayers(restoredLayers)
+		setLayerId(restoredLayers)
+	}
+
+	const handleRedo = () => {
+		const restoredLayers = redo()
+		if (!restoredLayers) return
+
+		setLayers(restoredLayers)
+		setLayerId(restoredLayers)
+	}
+
+	UseHotkey('ctrl+z', handleUndo)
+	UseHotkey('ctrl+y', handleRedo)
 
 	return (
 		<header className='section h-16 border-b flex items-center px-6 justify-between'>
@@ -28,14 +59,16 @@ export const Header = () => {
 			</div>
 			<div className='flex items-center gap-4'>
 				<Button
-					disabled
+					disabled={!canUndo}
+					onClick={handleUndo}
 					className='p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 disabled:opacity-30 transition-colors'
 				>
 					<UndoIcon size={20} />
 				</Button>
 
 				<Button
-					disabled
+					disabled={!canRedo}
+					onClick={handleRedo}
 					className='p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 disabled:opacity-30 transition-colors'
 				>
 					<RedoIcon size={20} />
