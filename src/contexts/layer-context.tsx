@@ -1,4 +1,5 @@
 import { createContext, useEffect } from 'react'
+import { v4 as uuid } from 'uuid'
 import { DEFAULT_LAYER_OPTIONS } from '../config/settings'
 import { useLocalStorage, useSafeContext } from '../hooks'
 import type { Layer } from '../types'
@@ -35,7 +36,7 @@ const LayerContext = createContext<LayerContextType>({
 const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 	const [layers, setLayers] = useLocalStorage<Layer[]>('layers', [
 		{
-			id: crypto.randomUUID(),
+			id: uuid(),
 			name: 'Camada 1',
 			...DEFAULT_LAYER_OPTIONS,
 		},
@@ -52,7 +53,7 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const addLayer = () => {
 		const layer: Layer = {
-			id: crypto.randomUUID(),
+			id: uuid(),
 			name: `Camada ${layers.length + 1}`,
 			...DEFAULT_LAYER_OPTIONS,
 		}
@@ -106,7 +107,7 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 
 		const clonedLayer: Layer = {
 			...layerToClone,
-			id: crypto.randomUUID(),
+			id: uuid(),
 			name: `${layerToClone.name} (cópia)`,
 		}
 
