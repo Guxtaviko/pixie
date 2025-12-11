@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { GridContext } from '../../contexts/grid-context'
+import { HistoryContext } from '../../contexts/history-context'
 import { LayerContext } from '../../contexts/layer-context'
 import { useSafeContext } from '../../hooks'
 import { Button } from './button'
@@ -38,6 +39,7 @@ export const GridModal = ({ onClose }: GridModalProps) => {
 		setSize,
 	} = useSafeContext(GridContext)
 	const { clearLayers } = useSafeContext(LayerContext)
+	const { clearHistory } = useSafeContext(HistoryContext)
 	const [width, setWidth] = useState<number>(currentWidth)
 	const [height, setHeight] = useState<number>(currentHeight)
 
@@ -47,8 +49,14 @@ export const GridModal = ({ onClose }: GridModalProps) => {
 	}
 
 	const handleSizeChange = () => {
+		if (width === currentWidth && height === currentHeight) {
+			onClose()
+			return
+		}
+
 		setSize(width, height)
 		clearLayers()
+		clearHistory()
 		onClose()
 	}
 
@@ -87,7 +95,14 @@ export const GridModal = ({ onClose }: GridModalProps) => {
 						>
 							<MinusIcon size={20} />
 						</Button>
-						<span className='mx-2 font-mono text-lg'>{width}</span>
+						{/* <span className='mx-2 font-mono text-lg'>{width}</span> */}
+						<input
+							type='number'
+							value={width}
+							onChange={(e) => setWidth(Math.max(1, Number(e.target.value)))}
+							className='custom-grid-input '
+							min={1}
+						/>
 						<Button
 							className='custom-grid-button'
 							onClick={() => setWidth(width + 1)}
@@ -106,7 +121,13 @@ export const GridModal = ({ onClose }: GridModalProps) => {
 						>
 							<MinusIcon size={20} />
 						</Button>
-						<span className='mx-2 font-mono text-lg'>{height}</span>
+						<input
+							type='number'
+							value={height}
+							onChange={(e) => setHeight(Math.max(1, Number(e.target.value)))}
+							className='custom-grid-input '
+							min={1}
+						/>
 						<Button
 							className='custom-grid-button'
 							onClick={() => setHeight(height + 1)}

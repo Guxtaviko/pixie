@@ -10,6 +10,7 @@ type HistoryContextType = {
 	canRedo: boolean
 	saveToHistory: (state: Layer[]) => void
 	history: Layer[][]
+	clearHistory: () => void
 }
 
 const HistoryContext = createContext<HistoryContextType>({
@@ -19,6 +20,7 @@ const HistoryContext = createContext<HistoryContextType>({
 	canRedo: false,
 	saveToHistory: (_state: Layer[]) => {},
 	history: [],
+	clearHistory: () => {},
 })
 
 const HistoryProvider = ({ children }: { children: React.ReactNode }) => {
@@ -63,9 +65,22 @@ const HistoryProvider = ({ children }: { children: React.ReactNode }) => {
 		return restoredState
 	}
 
+	const clearHistory = () => {
+		setHistory([])
+		setIndex(-1)
+	}
+
 	return (
 		<HistoryContext.Provider
-			value={{ undo, redo, canUndo, canRedo, saveToHistory, history }}
+			value={{
+				undo,
+				redo,
+				canUndo,
+				canRedo,
+				saveToHistory,
+				history,
+				clearHistory,
+			}}
 		>
 			{children}
 		</HistoryContext.Provider>

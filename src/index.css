@@ -18,3 +18,7 @@
 .custom-grid-button {
 	@apply bg-slate-200 dark:bg-slate-800 rounded-xl p-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors disabled:opacity-50;
 }
+
+.custom-grid-input {
+	@apply [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none outline-none mx-1 w-9 text-center font-mono text-lg border-b border-transparent focus:border-cyan-400
+}
