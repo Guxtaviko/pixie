@@ -17,9 +17,11 @@ import { UseHotkey, useSafeContext } from '../hooks'
 import type { Layer } from '../types'
 import { Button } from './ui/button'
 import { ExportModal } from './ui/export-modal'
+import { GridModal } from './ui/grid-modal'
 
 export const Header = () => {
-	const [isExportOpen, setIsExportOpen] = useState(false)
+	const [isExportModalOpen, setIsExportModalOpen] = useState(false)
+	const [isGridModalOpen, setIsGridModalOpen] = useState(false)
 
 	const { width, height } = useSafeContext(GridContext)
 	const { canUndo, undo, canRedo, redo } = useSafeContext(HistoryContext)
@@ -97,7 +99,11 @@ export const Header = () => {
 						<HelpIcon size={20} />
 					</Button>
 
-					<Button className='flex items-center gap-2 px-4 py-2 rounded-lg border bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:text-cyan-400 hover:border-cyan-500/50 transition-colors text-sm'>
+					<Button
+						title='Grid modal'
+						onClick={() => setIsGridModalOpen(true)}
+						className='flex items-center gap-2 px-4 py-2 rounded-lg border bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:text-cyan-400 hover:border-cyan-500/50 transition-colors text-sm'
+					>
 						<GridIcon size={16} />
 						<span>
 							{width}x{height}
@@ -105,8 +111,8 @@ export const Header = () => {
 					</Button>
 
 					<Button
-						title='Export'
-						onClick={() => setIsExportOpen(true)}
+						title='Export modal'
+						onClick={() => setIsExportModalOpen(true)}
 						className='flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-slate-50 dark:bg-slate-200 dark:text-slate-950 text-sm hover:bg-cyan-400 hover:text-slate-50 transition-all transform active:scale-95 font-bold border border-slate-200 dark:border-slate-800 hover:border-cyan-500/50'
 					>
 						<DownloadIcon size={16} />
@@ -114,7 +120,12 @@ export const Header = () => {
 					</Button>
 				</div>
 			</header>
-			{isExportOpen && <ExportModal onClose={() => setIsExportOpen(false)} />}
+			{isExportModalOpen && (
+				<ExportModal onClose={() => setIsExportModalOpen(false)} />
+			)}
+			{isGridModalOpen && (
+				<GridModal onClose={() => setIsGridModalOpen(false)} />
+			)}
 		</>
 	)
 }

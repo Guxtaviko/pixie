@@ -41,6 +41,7 @@ export const ExportModal = ({ onClose }: ExportModalProps) => {
 		link.href = canvas.toDataURL()
 
 		link.click()
+		onClose()
 	}
 
 	return (

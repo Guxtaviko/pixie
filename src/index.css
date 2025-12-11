@@ -14,3 +14,7 @@
 .slider {
 	@apply [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-cyan-400 hover:[&::-webkit-slider-thumb]:bg-cyan-500;
 }
+
+.custom-grid-button {
+	@apply bg-slate-200 dark:bg-slate-800 rounded-xl p-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors disabled:opacity-50;
+}
