@@ -17,6 +17,7 @@ type LayerContextType = {
 	updateLayer: (id: string, updatedLayer: Partial<Layer>) => void
 	cloneLayer: (id: string) => void
 	clearLayers: () => void
+	getMerged: () => Record<number, Record<number, string>>
 }
 
 const LayerContext = createContext<LayerContextType>({
@@ -31,6 +32,7 @@ const LayerContext = createContext<LayerContextType>({
 	updateLayer: () => null,
 	cloneLayer: () => null,
 	clearLayers: () => null,
+	getMerged: () => ({}),
 })
 
 const LayerProvider = ({ children }: { children: React.ReactNode }) => {
@@ -121,6 +123,25 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 		)
 	}
 
+	const getMerged = () => {
+		const mergedData: Record<number, Record<number, string>> = {}
+		layers.forEach((layer) => {
+			if (!layer.isVisible) return
+
+			for (let y = 0; y < layer.data.length; y++) {
+				for (let x = 0; x < (layer.data[y]?.length || 0); x++) {
+					const color = layer.data[y]?.[x]
+					if (color) {
+						if (!mergedData[y]) mergedData[y] = {}
+						mergedData[y][x] = color
+					}
+				}
+			}
+		})
+
+		return mergedData
+	}
+
 	return (
 		<LayerContext.Provider
 			value={{
@@ -135,6 +156,7 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 				updateLayer,
 				cloneLayer,
 				clearLayers,
+				getMerged,
 			}}
 		>
 			{children}

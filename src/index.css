@@ -10,3 +10,7 @@
 .section {
 	@apply bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800;
 }
+
+.slider {
+	@apply [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-cyan-400 hover:[&::-webkit-slider-thumb]:bg-cyan-500;
+}
