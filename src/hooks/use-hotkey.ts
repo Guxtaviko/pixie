@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react'
 
 export function UseHotkey(
 	key: string,
-	callback: () => void,
+	callback: (e: KeyboardEvent) => void,
 	allowRepeat = false,
 ) {
 	const checkKey = useCallback(
@@ -38,7 +38,7 @@ export function UseHotkey(
 				return
 			}
 
-			callback()
+			callback(e)
 		}
 		window.addEventListener('keydown', handleKeyDown)
 

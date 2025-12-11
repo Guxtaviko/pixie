@@ -57,6 +57,11 @@ export const Header = () => {
 	UseHotkey('ctrl+z', handleUndo)
 	UseHotkey('ctrl+y', handleRedo)
 
+	UseHotkey('ctrl+s', (e) => {
+		e.preventDefault()
+		setIsExportModalOpen(true)
+	})
+
 	return (
 		<>
 			<header className='section h-16 border-b flex items-center px-6 justify-between'>

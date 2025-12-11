@@ -1,4 +1,5 @@
 import { X as CloseIcon } from 'lucide-react'
+import { UseHotkey } from '../../hooks'
 import { Button } from './button'
 
 interface ModalProps {
@@ -7,6 +8,10 @@ interface ModalProps {
 }
 
 export const Modal = ({ onClose, children }: ModalProps) => {
+	UseHotkey('escape', () => {
+		onClose()
+	})
+
 	return (
 		<div className='fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-xs p-4'>
 			<div className='section border-2 w-full max-w-md rounded-2xl shadow-2xl p-6 relative'>
