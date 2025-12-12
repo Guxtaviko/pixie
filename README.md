@@ -7,9 +7,9 @@
 <p align="center"> A simple pixel art tool built with <a href="https://react.dev/" target="_blank">React</a></p>
 
 ## Description
-Pixie is a simple pixel art app built primarily with React and Vite. It allows users to create and export drawings using easy-to-use tools. The application provides a robust yet simple environment for developing and managing pixel art.
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/3399c9a5-518b-4d19-9331-de5b59c3e822" />
 
+Pixie is a simple pixel art app built primarily with React and Vite. It allows users to create and export drawings using easy-to-use tools. The application provides a robust yet simple environment for developing and managing pixel art.
 
 ## Setup
 ### Manual Installation:
