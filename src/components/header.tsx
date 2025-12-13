@@ -7,7 +7,7 @@ import {
 	Sun as SunIcon,
 	Undo2 as UndoIcon,
 } from 'lucide-react'
-import { useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import Logo from '../assets/logo.png'
 import { ThemeContext } from '../contexts'
 import { GridContext } from '../contexts/grid-context'
@@ -18,10 +18,12 @@ import type { Layer } from '../types'
 import { Button } from './ui/button'
 import { ExportModal } from './ui/export-modal'
 import { GridModal } from './ui/grid-modal'
+import { HelpModal } from './ui/help-modal'
 
 export const Header = () => {
 	const [isExportModalOpen, setIsExportModalOpen] = useState(false)
 	const [isGridModalOpen, setIsGridModalOpen] = useState(false)
+	const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
 
 	const { width, height } = useSafeContext(GridContext)
 	const { canUndo, undo, canRedo, redo } = useSafeContext(HistoryContext)
@@ -53,6 +55,16 @@ export const Header = () => {
 		setLayers(restoredLayers)
 		setLayerId(restoredLayers)
 	}
+
+	const handleCloseHelpModal = () => {
+		localStorage.setItem('help-modal-seen', 'true')
+		setIsHelpModalOpen(false)
+	}
+
+	useEffect(() => {
+		const helpModalSeen = localStorage.getItem('help-modal-seen')
+		if (!helpModalSeen) setIsHelpModalOpen(true)
+	}, [])
 
 	UseHotkey('ctrl+z', handleUndo)
 	UseHotkey('ctrl+y', handleRedo)
@@ -99,6 +111,7 @@ export const Header = () => {
 
 					<Button
 						title='Help'
+						onClick={() => setIsHelpModalOpen(true)}
 						className='p-2 text-slate-500 hover:text-cyan-400 transition-colors'
 					>
 						<HelpIcon size={20} />
@@ -131,6 +144,7 @@ export const Header = () => {
 			{isGridModalOpen && (
 				<GridModal onClose={() => setIsGridModalOpen(false)} />
 			)}
+			{isHelpModalOpen && <HelpModal onClose={handleCloseHelpModal} />}
 		</>
 	)
 }
