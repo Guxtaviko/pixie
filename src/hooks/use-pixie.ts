@@ -4,6 +4,7 @@ import { GridContext } from '../contexts/grid-context'
 import { HistoryContext } from '../contexts/history-context'
 import { LayerContext } from '../contexts/layer-context'
 import { ToolContext } from '../contexts/tool-context'
+import type { Coordinates } from '../types'
 import { useSafeContext } from './use-safe-context'
 
 export function UsePixie() {
@@ -36,8 +37,39 @@ export function UsePixie() {
 			const newData = getLayerData()
 			if (!newData[y]) newData[y] = []
 
+			if (newData[y][x] === color) return // No change
+
 			newData[y][x] = color
 			updateLayer(layer.id, { data: newData })
+		},
+		[
+			layer,
+			primary,
+			updateLayer,
+			getLayerData,
+			validateCoordinates,
+			isLayerDrawable,
+		],
+	)
+
+	const drawPixels = useCallback(
+		(coords: Coordinates[], color = primary) => {
+			if (!isLayerDrawable) return
+
+			const newData = getLayerData()
+			let hasChanges = false
+
+			coords.forEach(({ x, y }) => {
+				if (!validateCoordinates(x, y)) return
+
+				if (!newData[y]) newData[y] = []
+				if (newData[y][x] === color) return // No change
+
+				newData[y][x] = color
+				hasChanges = true
+			})
+
+			if (hasChanges) updateLayer(layer.id, { data: newData })
 		},
 		[
 			layer,
@@ -125,7 +157,7 @@ export function UsePixie() {
 	)
 
 	const handleInteraction = useCallback(
-		(x: number, y: number) => {
+		({ x, y }: Coordinates) => {
 			switch (tool) {
 				case 'brush':
 					drawPixel(x, y)
@@ -146,6 +178,22 @@ export function UsePixie() {
 		[tool, drawPixel, floodFill, pickColor],
 	)
 
+	const handleInterpolatedInteraction = useCallback(
+		(coords: Coordinates[]) => {
+			switch (tool) {
+				case 'brush':
+					drawPixels(coords)
+					break
+				case 'eraser':
+					drawPixels(coords, 'transparent')
+					break
+				default:
+					break
+			}
+		},
+		[tool, drawPixels],
+	)
+
 	const endDrawing = useCallback(() => {
 		if (!['brush', 'eraser'].includes(tool)) return
 
@@ -155,5 +203,5 @@ export function UsePixie() {
 		saveToHistory(newLayers)
 	}, [layers, layer, getLayerData, saveToHistory, tool])
 
-	return { handleInteraction, endDrawing }
+	return { handleInteraction, handleInterpolatedInteraction, endDrawing }
 }

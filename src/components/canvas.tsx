@@ -1,11 +1,17 @@
 import type React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { DARK_CHECKER, DEFAULT_ZOOM, LIGHT_CHECKER } from '../config/settings'
+import {
+	COORDS_DEBUG,
+	DARK_CHECKER,
+	DEFAULT_ZOOM,
+	LIGHT_CHECKER,
+} from '../config/settings'
 import { ThemeContext } from '../contexts'
 import { GridContext } from '../contexts/grid-context'
 import { LayerContext } from '../contexts/layer-context'
 import { useLocalStorage, useSafeContext } from '../hooks'
 import { UsePixie } from '../hooks/use-pixie'
+import type { Coordinates } from '../types'
 import { CanvasZoom } from './ui/canvas-zoom'
 
 export const Canvas = () => {
@@ -14,14 +20,17 @@ export const Canvas = () => {
 	const { layers } = useSafeContext(LayerContext)
 	const [zoom, setZoom] = useLocalStorage<number>('canvas-zoom', DEFAULT_ZOOM)
 	const [isDrawing, setIsDrawing] = useState<boolean>(false)
+	const [coordsBuffer, setCoordsBuffer] = useState<Coordinates[]>([])
+
 	const canvasRef = useRef<HTMLCanvasElement>(null)
-	const { handleInteraction, endDrawing } = UsePixie()
+	const { handleInteraction, handleInterpolatedInteraction, endDrawing } =
+		UsePixie()
 
 	const canvasWidth = width * pixelSize
 	const canvasHeight = height * pixelSize
 
 	const getCoordinates = useCallback(
-		(e: React.MouseEvent | MouseEvent) => {
+		(e: React.MouseEvent | MouseEvent): Coordinates | null => {
 			const canvas = canvasRef.current
 			if (!canvas) return null
 
@@ -43,7 +52,7 @@ export const Canvas = () => {
 		setIsDrawing(true)
 		const coords = getCoordinates(e)
 		if (!coords) return
-		handleInteraction(coords.x, coords.y)
+		handleInteraction(coords)
 	}
 
 	const handleMove = (e: React.MouseEvent) => {
@@ -52,13 +61,19 @@ export const Canvas = () => {
 
 		const coords = getCoordinates(e)
 		if (!coords) return
-		handleInteraction(coords.x, coords.y)
+		setCoordsBuffer((prev) =>
+			prev.find((c) => c.x === coords.x && c.y === coords.y)
+				? prev
+				: [...prev, coords],
+		)
+		handleInteraction(coords)
 	}
 
 	const handleEnd = () => {
 		setIsDrawing(false)
 		if (!isDrawing) return
 
+		if (coordsBuffer.length) setCoordsBuffer([])
 		endDrawing()
 	}
 
@@ -118,11 +133,50 @@ export const Canvas = () => {
 				ctx.stroke()
 			}
 		}
+
+		// Writes coordinates for debugging
+		if (COORDS_DEBUG) {
+			const fill = theme === 'dark' ? '#ffffff' : '#000000'
+			const fontSize = Math.max(pixelSize / 4, 8)
+
+			ctx.fillStyle = fill
+			ctx.font = `${fontSize}px monospace`
+			for (let y = 0; y < height; y++) {
+				for (let x = 0; x < width; x++) {
+					const baseX = x * pixelSize + fontSize / 3
+					const baseY = y * pixelSize + fontSize
+
+					ctx.fillText(`${x},${y}`, baseX, baseY)
+				}
+			}
+		}
 	}, [width, height, showGrid, theme, pixelSize, layers])
 
 	useEffect(() => {
 		draw()
 	}, [draw])
+
+	useEffect(() => {
+		if (coordsBuffer.length < 2) return
+
+		const [from, to, ...rest] = coordsBuffer
+		const dx = Math.abs(to.x - from.x)
+		const dy = Math.abs(to.y - from.y)
+		const steps = Math.max(dx, dy)
+
+		const interpolatedCoords: Coordinates[] = []
+		for (let i = 1; i <= steps; i++) {
+			const x = Math.round(from.x + ((to.x - from.x) * i) / steps)
+			const y = Math.round(from.y + ((to.y - from.y) * i) / steps)
+			interpolatedCoords.push({ x, y })
+		}
+
+		if (interpolatedCoords.length >= 2) {
+			handleInterpolatedInteraction(interpolatedCoords)
+		}
+
+		setCoordsBuffer([to, ...rest])
+	}, [coordsBuffer, handleInterpolatedInteraction])
 
 	return (
 		<div className='flex-1 relative overflow-hidden flex items-center justify-center p-8 cursor-crosshair touch-none bg-radial-[at_50%_50%] from-slate-200 to-slate-50 dark:from-slate-800 dark:to-slate-950 '>

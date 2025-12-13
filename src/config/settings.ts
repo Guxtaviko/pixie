@@ -43,6 +43,9 @@ export const DEFAULT_LAYER_OPTIONS: Omit<Layer, 'id' | 'name'> = {
 	data: [],
 }
 
+// Debug settings
+export const COORDS_DEBUG = false
+
 // Other settings
 export const DEFAULT_TOOL: Tool = 'brush'
 export const MAX_HISTORY_LENGTH = 30

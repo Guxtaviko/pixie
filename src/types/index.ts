@@ -10,3 +10,8 @@ export type Layer = {
 	opacity: number
 	data: string[][]
 }
+
+export type Coordinates = {
+	x: number
+	y: number
+}
