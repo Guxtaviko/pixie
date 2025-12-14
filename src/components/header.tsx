@@ -7,7 +7,7 @@ import {
 	Sun as SunIcon,
 	Undo2 as UndoIcon,
 } from 'lucide-react'
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Logo from '../assets/logo.png'
 import { ThemeContext } from '../contexts'
 import { GridContext } from '../contexts/grid-context'
