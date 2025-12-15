@@ -23,7 +23,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
 			</p>
 			<hr className='border-slate-200 dark:border-slate-800 my-4' />
 			<div>
-				<h3 className='font-medium text-slate-800 dark:text-slate-200 uppercase'>
+				<h3 className='font-medium text-slate-800 dark:text-slate-200 uppercase tracking-wider'>
 					Como usar
 				</h3>
 				<ul className='flex flex-col gap-3 text-sm my-2 text-slate-700 dark:text-slate-300'>
@@ -62,7 +62,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
 				</ul>
 			</div>
 			<div className='mt-6'>
-				<h3 className='font-medium text-slate-800 dark:text-slate-200 uppercase'>
+				<h3 className='font-medium text-slate-800 dark:text-slate-200 uppercase tracking-wider'>
 					Atalhos
 				</h3>
 				<div className='grid grid-cols-2 gap-2 text-xs text-slate-700 dark:text-slate-300'>
