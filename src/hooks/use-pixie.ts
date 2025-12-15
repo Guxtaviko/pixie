@@ -9,7 +9,7 @@ import { useSafeContext } from './use-safe-context'
 
 export function UsePixie() {
 	const { tool } = useSafeContext(ToolContext)
-	const { primary, setColor } = useSafeContext(ColorContext)
+	const { primary, setColor, addToPalette } = useSafeContext(ColorContext)
 	const { width, height } = useSafeContext(GridContext)
 	const { layers, currentLayerId, updateLayer } = useSafeContext(LayerContext)
 	const { saveToHistory } = useSafeContext(HistoryContext)
@@ -148,12 +148,15 @@ export function UsePixie() {
 				if (!layer.isVisible) continue
 
 				const color = layer.data[y]?.[x]
-				if (color && color !== 'transparent') setColor(color)
+				if (color && color !== 'transparent') {
+					setColor(color)
+					addToPalette(color)
+				}
 			}
 
 			return null
 		},
-		[validateCoordinates, layers, setColor],
+		[layers, validateCoordinates, setColor, addToPalette],
 	)
 
 	const handleInteraction = useCallback(

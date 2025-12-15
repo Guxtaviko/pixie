@@ -4,24 +4,45 @@ import {
 	Plus as PlusIcon,
 	Zap as ZapIcon,
 } from 'lucide-react'
-import { DEFAULT_PALETTE } from '../config/settings'
+import { useState } from 'react'
 import { ColorContext } from '../contexts/color-context'
 import { useSafeContext } from '../hooks'
 import { colorBrightness } from '../utils/color-brightness'
 import { Button } from './ui/button'
+import { ColorSelector } from './ui/color-selector'
 import { Layers } from './ui/layers'
 
 export const Sidebar = () => {
-	const { primary: color, setColor } = useSafeContext(ColorContext)
+	const [isColorSelectorOpen, setIsColorSelectorOpen] = useState(false)
+	const [customColor, setCustomColor] = useState<string | null>(null)
+
+	const {
+		primary: color,
+		palette,
+		setColor,
+		addToPalette,
+	} = useSafeContext(ColorContext)
+
+	const toggleColorSelector = () => setIsColorSelectorOpen((prev) => !prev)
+
+	const handleColorSelectorClose = () => {
+		setIsColorSelectorOpen(false)
+
+		if (!customColor) return
+
+		addToPalette(customColor)
+		setColor(customColor)
+		setCustomColor(null)
+	}
 
 	return (
-		<aside className='w-72 section border-l flex flex-col p-4 gap-4'>
+		<aside className='w-72 section border-l flex flex-col py-4 px-2 *:px-2 gap-4'>
 			<h2 className='text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2'>
 				<ColorIcon size={16} />
 				<span>Cores</span>
 			</h2>
-			<div className='grid grid-cols-6 gap-1'>
-				{DEFAULT_PALETTE.map((hex) => {
+			<div className='grid grid-cols-6 gap-1 relative'>
+				{palette.map((hex) => {
 					const brightness = colorBrightness(hex)
 					return (
 						<Button
@@ -43,11 +64,21 @@ export const Sidebar = () => {
 					)
 				})}
 				<Button
-					className='w-full aspect-square rounded-lg flex items-center justify-center z-10 border-2 border-dashed border-slate-200 dark:border-slate-800 transition-transform hover:scale-105 text-slate-500 hover:text-slate-950 dark:hover:text-slate-50 hover:border-slate-500'
+					onClick={toggleColorSelector}
+					className='color-selector-activator w-full aspect-square rounded-lg flex items-center justify-center z-10 border-2 border-dashed border-slate-200 dark:border-slate-800 transition-transform hover:scale-105 text-slate-500 hover:text-slate-950 dark:hover:text-slate-50 hover:border-slate-500'
 					style={{ backgroundColor: 'transparent' }}
 				>
 					<PlusIcon size={16} />
 				</Button>
+				{isColorSelectorOpen && (
+					<div className='absolute top-0 left-0 transform -translate-x-full z-30'>
+						<ColorSelector
+							showPreview
+							onColorChange={setCustomColor}
+							handleClose={handleColorSelectorClose}
+						/>
+					</div>
+				)}
 			</div>
 			<Layers />
 			<div className='mt-auto flex justify-between items-center text-cyan-400'>

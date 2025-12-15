@@ -1,22 +1,28 @@
 import type { Layer, Tool } from '../types'
 
 // Color settings
+const WHITE = '#ffffff'
+const BLACK = '#000000'
+
 export const DEFAULT_PALETTE = [
-	'#f8fafc',
 	'#ef4444',
 	'#f97316',
 	'#eab308',
+	'#84cc16',
 	'#22c55e',
-	'#06b6d4',
+	'#14b8a6',
+	'#0ea5e9',
 	'#3b82f6',
 	'#8b5cf6',
 	'#d946ef',
+	'#ec4899',
 	'#f43f5e',
-	'#78350f',
-	'#000000',
+	'#71717a',
+	WHITE,
+	BLACK,
 ]
-export const DEFAULT_PRIMARY_COLOR = DEFAULT_PALETTE[0]
-export const DEFAULT_SECONDARY_COLOR = DEFAULT_PALETTE[11]
+export const DEFAULT_PRIMARY_COLOR = BLACK
+export const DEFAULT_SECONDARY_COLOR = WHITE
 
 // Grid settings
 export const DEFAULT_GRID_SIZE = 16

@@ -28,7 +28,8 @@ export const ToolBar = () => {
 	const [isColorSelectorOpen, setIsColorSelectorOpen] = useState(false)
 
 	const { showGrid, toggleGrid } = useSafeContext(GridContext)
-	const { primary, secondary, toggleActiveColor } = useSafeContext(ColorContext)
+	const { primary, secondary, toggleActiveColor, setColor } =
+		useSafeContext(ColorContext)
 	const { tool, setTool } = useSafeContext(ToolContext)
 	const { clearLayers } = useSafeContext(LayerContext)
 
@@ -70,7 +71,7 @@ export const ToolBar = () => {
 			<div className='relative w-11 h-11'>
 				<Button
 					onClick={toggleColorSelector}
-					className='w-9 h-9 rounded-lg border-2 absolute top-0 left-0 z-20 border-slate-900 dark:border-slate-100'
+					className='color-selector-activator w-9 h-9 rounded-lg border-2 absolute top-0 left-0 z-20 border-slate-900 dark:border-slate-100'
 					style={{ backgroundColor: primary }}
 				/>
 				<Button
@@ -80,7 +81,10 @@ export const ToolBar = () => {
 				/>
 				{isColorSelectorOpen && (
 					<div className='absolute top-0 left-12 z-30'>
-						<ColorSelector handleClose={() => setIsColorSelectorOpen(false)} />
+						<ColorSelector
+							onColorChange={setColor}
+							handleClose={() => setIsColorSelectorOpen(false)}
+						/>
 					</div>
 				)}
 			</div>

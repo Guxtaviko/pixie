@@ -4,21 +4,30 @@ import { UseHotkey, useSafeContext } from '../../hooks'
 import { hexToHSB, hsbToHex } from '../../utils/color-converter'
 
 interface ColorSelectorProps {
+	showPreview?: boolean
 	handleClose: () => void
+	onColorChange: (color: string) => void
 }
 
-export const ColorSelector = ({ handleClose }: ColorSelectorProps) => {
-	const { primary, setColor } = useSafeContext(ColorContext)
-	const hsb = hexToHSB(primary)
+export const ColorSelector = ({
+	handleClose,
+	onColorChange,
+	showPreview = false,
+}: ColorSelectorProps) => {
+	const { primary } = useSafeContext(ColorContext)
+	const [customColor, setCustomColor] = useState(primary)
+	const hsb = hexToHSB(customColor)
 	const [hue, setHue] = useState(hsb.h)
 	const [saturation, setSaturation] = useState(hsb.s)
 	const [brightness, setBrightness] = useState(hsb.b)
-	const [customColor, setCustomColor] = useState(primary)
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			const target = event.target as HTMLElement
-			if (target.closest('#color-selector')) return
+			const activator = target.closest('.color-selector-activator')
+			const activatorMatches = activator?.parentElement?.contains(target)
+
+			if (target.closest('#color-selector') || activatorMatches) return
 
 			handleClose()
 		}
@@ -34,8 +43,8 @@ export const ColorSelector = ({ handleClose }: ColorSelectorProps) => {
 	useEffect(() => {
 		const hex = hsbToHex({ h: hue, s: saturation, b: brightness })
 		setCustomColor(hex)
-		setColor(hex)
-	}, [hue, saturation, brightness, setColor])
+		onColorChange(hex)
+	}, [hue, saturation, brightness, onColorChange])
 
 	const colorRef = useRef<HTMLDivElement>(null)
 	const pickerRef = useRef<HTMLDivElement>(null)
@@ -125,7 +134,7 @@ export const ColorSelector = ({ handleClose }: ColorSelectorProps) => {
 	return (
 		<div
 			id='color-selector'
-			className='bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-4'
+			className='bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-4 w-fit flex gap-4'
 		>
 			<div className='flex flex-col gap-3'>
 				<div
@@ -135,7 +144,7 @@ export const ColorSelector = ({ handleClose }: ColorSelectorProps) => {
 					onMouseMove={handleMouseMove('color')}
 					onMouseUp={handleMouseUp}
 					onMouseLeave={handleMouseUp}
-					className={`relative w-36 h-36 cursor-crosshair rounded-md`}
+					className={`relative min-w-36 w-full h-36 cursor-crosshair rounded-md`}
 					style={{
 						backgroundColor: `hsl(${hue}, 100%, 50%)`,
 						backgroundImage: `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent)`,
@@ -178,13 +187,24 @@ export const ColorSelector = ({ handleClose }: ColorSelectorProps) => {
 						style={{ left: `calc(${(hue / 360) * 100}% - 7px)` }}
 					/>
 				</div>
-				<input
-					type='text'
-					value={customColor}
-					maxLength={7}
-					onChange={handleColorInputChange}
-					className='w-full p-1 text-center text-sm rounded border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 outline-none'
-				/>
+				<div className='flex gap-2'>
+					{showPreview && (
+						// Color preview box
+						<div
+							className='min-w-10 h-full mb-2 rounded-md border-2 border-slate-200 dark:border-slate-800'
+							style={{
+								backgroundColor: customColor,
+							}}
+						/>
+					)}
+					<input
+						type='text'
+						value={customColor}
+						maxLength={7}
+						onChange={handleColorInputChange}
+						className='w-36 p-1 text-center text-sm rounded border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 outline-none'
+					/>
+				</div>
 			</div>
 		</div>
 	)
