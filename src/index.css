@@ -20,5 +20,5 @@
 }
 
 .custom-grid-input {
-	@apply [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none outline-none mx-1 w-9 text-center font-mono text-lg border-b border-transparent focus:border-cyan-400
+	@apply [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none outline-none mx-1 w-9 text-center font-mono text-lg border-b border-transparent focus:border-cyan-400;
 }
