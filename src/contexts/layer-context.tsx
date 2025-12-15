@@ -118,9 +118,10 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 	}
 
 	const clearLayers = () => {
-		setLayers((prevLayers) =>
-			prevLayers.map((layer) => ({ ...layer, data: [] })),
-		)
+		const newLayers = layers.map((layer) => ({ ...layer, data: [] }))
+
+		setLayers(newLayers)
+		saveToHistory(newLayers)
 	}
 
 	const getMerged = () => {
