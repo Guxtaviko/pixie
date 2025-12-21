@@ -41,8 +41,8 @@ export const Layers = () => {
 	}
 
 	return (
-		<div className='border-t border-slate-200 dark:border-slate-800'>
-			<div className='flex items-center justify-between my-4'>
+		<div className='border-t border-slate-200 dark:border-slate-800 flex-1 min-h-0 px-0!'>
+			<div className='flex items-center justify-between my-4 px-2'>
 				<h2 className='text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2'>
 					<LayersIcon size={16} />
 					<span>Camadas</span>
@@ -55,7 +55,7 @@ export const Layers = () => {
 				</Button>
 			</div>
 			<DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-				<div className='flex flex-col gap-1'>
+				<div className='flex flex-col gap-1 overflow-y-auto custom-scrollbar px-2 max-h-[calc(100%-4rem)]'>
 					<SortableContext
 						items={layers.map((layer) => layer.id)}
 						strategy={verticalListSortingStrategy}

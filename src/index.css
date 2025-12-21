@@ -22,3 +22,7 @@
 .custom-grid-input {
 	@apply [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none outline-none mx-1 w-9 text-center font-mono text-lg border-b border-transparent focus:border-cyan-400;
 }
+
+.custom-scrollbar {
+	@apply [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:rounded-md [&::-webkit-scrollbar-thumb]:rounded-md [&::-webkit-scrollbar-track]:bg-slate-100 [&::-webkit-scrollbar-thumb]:bg-slate-300 dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500;
+}

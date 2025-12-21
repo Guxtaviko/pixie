@@ -68,7 +68,7 @@ export const ToolBar = () => {
 				<GridIcon size={20} />
 			</Button>
 
-			<div className='relative w-11 h-11'>
+			<div className='relative color-selector-wrapper w-11 h-11 '>
 				<Button
 					onClick={toggleColorSelector}
 					className='color-selector-activator w-9 h-9 rounded-lg border-2 absolute top-0 left-0 z-20 border-slate-900 dark:border-slate-100'

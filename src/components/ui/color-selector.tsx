@@ -25,9 +25,10 @@ export const ColorSelector = ({
 		const handleClickOutside = (event: MouseEvent) => {
 			const target = event.target as HTMLElement
 			const activator = target.closest('.color-selector-activator')
-			const activatorMatches = activator?.parentElement?.contains(target)
+			const wrapper = activator?.closest('.color-selector-wrapper')
+			const wrapperMatches = wrapper?.querySelector('#color-selector')
 
-			if (target.closest('#color-selector') || activatorMatches) return
+			if (target.closest('#color-selector') || wrapperMatches) return
 
 			handleClose()
 		}
