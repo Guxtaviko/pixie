@@ -1,4 +1,4 @@
-import { createContext, useEffect } from 'react'
+import { createContext, type SetStateAction, useEffect } from 'react'
 import { v4 as uuid } from 'uuid'
 import { DEFAULT_LAYER_OPTIONS } from '../config/settings'
 import { useLocalStorage, useSafeContext } from '../hooks'
@@ -7,7 +7,7 @@ import { HistoryContext } from './history-context'
 
 type LayerContextType = {
 	layers: Layer[]
-	setLayers: (layers: Layer[]) => void
+	setLayers: (layers: SetStateAction<Layer[]>) => void
 	currentLayerId: string | null
 	setCurrentLayerId: (id: string | null) => void
 	addLayer: () => void
