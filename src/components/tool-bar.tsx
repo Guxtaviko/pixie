@@ -89,12 +89,15 @@ export const ToolBar = () => {
 				)}
 			</div>
 
-			<Button
-				onClick={clearLayers}
-				className='mt-auto p-3 text-red-400 hover:bg-red-500/15 hover:text-red-500 rounded-xl transition-all'
-			>
-				<TrashIcon size={20} />
-			</Button>
+			<div className='mt-auto flex flex-col items-center gap-2'>
+				<Button
+					onClick={clearLayers}
+					className='p-3 text-red-400 hover:bg-red-500/15 hover:text-red-500 rounded-xl transition-all'
+				>
+					<TrashIcon size={20} />
+				</Button>
+				<span className='text-xs text-slate-500'>v{APP_VERSION}</span>
+			</div>
 		</aside>
 	)
 }
