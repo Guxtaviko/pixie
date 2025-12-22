@@ -17,6 +17,8 @@ import { Button } from './ui/button'
 import { ColorSelector } from './ui/color-selector'
 import { ToolButton } from './ui/tool-button'
 
+const version = APP_VERSION
+
 const buttons = [
 	{ label: 'Pincel', icon: BrushIcon, hotKey: 'b', tool: 'brush' },
 	{ label: 'Borracha', icon: EraserIcon, hotKey: 'e', tool: 'eraser' },
@@ -96,7 +98,7 @@ export const ToolBar = () => {
 				>
 					<TrashIcon size={20} />
 				</Button>
-				<span className='text-xs text-slate-500'>v{APP_VERSION}</span>
+				<span className='text-xs text-slate-500'>v{version}</span>
 			</div>
 		</aside>
 	)

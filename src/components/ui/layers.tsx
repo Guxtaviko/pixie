@@ -2,7 +2,6 @@ import {
 	DndContext,
 	type DragEndEvent,
 	MouseSensor,
-	PointerSensor,
 	useSensor,
 	useSensors,
 } from '@dnd-kit/core'
