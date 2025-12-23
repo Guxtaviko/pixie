@@ -1,10 +1,15 @@
 import {
+	closestCenter,
 	DndContext,
 	type DragEndEvent,
 	MouseSensor,
 	useSensor,
 	useSensors,
 } from '@dnd-kit/core'
+import {
+	restrictToParentElement,
+	restrictToVerticalAxis,
+} from '@dnd-kit/modifiers'
 import {
 	arrayMove,
 	SortableContext,
@@ -53,7 +58,12 @@ export const Layers = () => {
 					<PlusIcon size={16} />
 				</Button>
 			</div>
-			<DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+			<DndContext
+				sensors={sensors}
+				onDragEnd={handleDragEnd}
+				collisionDetection={closestCenter}
+				modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+			>
 				<div className='flex flex-col gap-1 overflow-y-auto custom-scrollbar px-2 max-h-[calc(100%-4rem)]'>
 					<SortableContext
 						items={layers.map((layer) => layer.id)}
