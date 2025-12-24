@@ -7,6 +7,7 @@ import {
 	LockOpen as UnlockIcon,
 	Eye as VisibleIcon,
 } from 'lucide-react'
+import { useState } from 'react'
 import { LayerContext } from '../../contexts/layer-context'
 import { useSafeContext } from '../../hooks'
 import type { Layer as LayerI } from '../../types'
@@ -18,6 +19,8 @@ interface LayerProps {
 }
 
 export const Layer = ({ data, allowDelete = false }: LayerProps) => {
+	const [isEditing, setIsEditing] = useState(false)
+
 	const {
 		setNodeRef,
 		attributes,
@@ -66,12 +69,16 @@ export const Layer = ({ data, allowDelete = false }: LayerProps) => {
 		removeLayer(id)
 	}
 
+	const handleDoubleClick = () => setIsEditing(true)
+
+	const handleBlur = () => setIsEditing(false)
+
 	return (
 		// biome-ignore lint/a11y: button inside button situation
 		<div
 			ref={setNodeRef}
 			onClick={() => setCurrentLayerId(data.id)}
-			className={`flex items-center p-2 rounded-lg border transition-colors group ${
+			className={`flex items-center p-2 rounded-lg border transition-colors group cursor-pointer ${
 				currentLayerId === data.id
 					? 'border-cyan-500 bg-cyan-500/10'
 					: 'border-transparent hover:bg-slate-200 dark:hover:bg-slate-800'
@@ -102,11 +109,12 @@ export const Layer = ({ data, allowDelete = false }: LayerProps) => {
 			</Button>
 			<input
 				id={`data-${data.id}-name`}
-				onChange={(e) => {
-					updateLayer(data.id, { name: e.currentTarget.value })
-				}}
+				onChange={(e) => updateLayer(data.id, { name: e.currentTarget.value })}
+				onDoubleClick={handleDoubleClick}
+				onBlur={handleBlur}
+				readOnly={!isEditing}
 				value={data.name}
-				className='ml-2 flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap outline-none bg-transparent text-left text-sm'
+				className={`ml-2 flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap outline-none bg-transparent text-left text-sm ${!isEditing && !isDragging && 'cursor-pointer'} ${isDragging && 'cursor-grabbing'}`}
 			/>
 			<Button
 				onClick={(e) => handleClone(e, data.id)}
