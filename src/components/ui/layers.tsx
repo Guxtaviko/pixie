@@ -52,6 +52,7 @@ export const Layers = () => {
 					<span>Camadas</span>
 				</h2>
 				<Button
+					title='Adicionar camada'
 					onClick={addLayer}
 					className='p-1.5 bg-slate-200 dark:bg-slate-800 hover:bg-cyan-500/25 hover:text-cyan-400 rounded-lg transition-colors'
 				>
