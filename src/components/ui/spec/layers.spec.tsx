@@ -11,7 +11,7 @@ describe('Layers', () => {
 			</PixieTestProviders>,
 		)
 
-		const addButton = screen.getByRole('button', { name: 'Adicionar camada' })
+		const addButton = screen.getByTitle('Adicionar camada')
 		fireEvent.click(addButton)
 
 		expect(screen.getAllByDisplayValue(/Camada/i).length).toBeGreaterThan(1)

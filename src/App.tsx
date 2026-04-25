@@ -1,16 +1,34 @@
+import { useState } from 'react'
 import { Canvas } from './components/canvas'
 import { Header } from './components/header'
 import { Sidebar } from './components/sidebar'
+import { SidebarWrapper } from './components/sidebar-wrapper'
 import { ToolBar } from './components/tool-bar'
+import { useMobile } from './hooks/use-mobile'
 
 export const App = () => {
+	const isMobile = useMobile()
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+	const toggleSidebar = () => setIsSidebarOpen((prev) => !prev)
+	const closeSidebar = () => setIsSidebarOpen(false)
+
 	return (
 		<div className='min-h-dvh bg-radial bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200  overflow-hidden selection:bg-cyan-500/50 selection:text-white antialiased duration-300'>
-			<Header />
-			<main className='flex h-[calc(100vh-4rem)] relative'>
+			<Header onToggleSidebar={isMobile ? toggleSidebar : undefined} />
+			<main className='flex h-[calc(100dvh-4rem)] md:h-[calc(100vh-4rem)] relative flex-col md:flex-row'>
 				<ToolBar />
 				<Canvas />
-				<Sidebar />
+				{isMobile ? (
+					<SidebarWrapper isOpen={isSidebarOpen} onClose={closeSidebar}>
+						<Sidebar
+							onClose={closeSidebar}
+							className='w-full h-full border-0'
+						/>
+					</SidebarWrapper>
+				) : (
+					<Sidebar className='flex' />
+				)}
 			</main>
 		</div>
 	)

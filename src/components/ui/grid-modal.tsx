@@ -84,7 +84,7 @@ export const GridModal = ({ onClose }: GridModalProps) => {
 					</Button>
 				))}
 			</div>
-			<div className='flex items-center gap-3'>
+			<div className='flex items-center justify-between gap-5 sm:gap-3 flex-wrap sm:flex-nowrap'>
 				<div className='flex flex-col gap-2'>
 					<span className='text-sm text-slate-500'>Largura</span>
 					<div className='flex items-center gap-2'>
@@ -139,7 +139,7 @@ export const GridModal = ({ onClose }: GridModalProps) => {
 				<Button
 					title='Apply'
 					onClick={handleSizeChange}
-					className='px-4 py-2 rounded-lg bg-slate-800 text-slate-50 dark:bg-slate-200 dark:text-slate-950 hover:bg-cyan-400 hover:text-slate-50 transition-all transform active:scale-95 font-bold border border-slate-200 dark:border-slate-800 hover:border-cyan-500 ml-auto self-end'
+					className='px-4 py-2 rounded-lg bg-slate-800 text-slate-50 dark:bg-slate-200 dark:text-slate-950 hover:bg-cyan-400 hover:text-slate-50 transition-all transform active:scale-95 font-bold border border-slate-200 dark:border-slate-800 hover:border-cyan-500 self-end w-full'
 				>
 					Aplicar
 				</Button>

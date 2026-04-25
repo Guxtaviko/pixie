@@ -7,7 +7,7 @@ describe('Header', () => {
 	it('opens export modal when clicking Exportar', () => {
 		render(
 			<PixieTestProviders>
-				<Header />
+				<Header onToggleSidebar={() => {}} />
 			</PixieTestProviders>,
 		)
 
@@ -19,11 +19,11 @@ describe('Header', () => {
 	it('opens grid modal when clicking grid size button', () => {
 		render(
 			<PixieTestProviders>
-				<Header />
+				<Header onToggleSidebar={() => {}} />
 			</PixieTestProviders>,
 		)
 
-		fireEvent.click(screen.getByRole('button', { name: /\d+x\d+/i }))
+		fireEvent.click(screen.getByTitle('Grid'))
 
 		expect(screen.getByText('Configurar Grade')).toBeInTheDocument()
 	})

@@ -21,13 +21,13 @@ export const ToolButton = ({
 			<Button
 				title={label}
 				onClick={onClick}
-				className={`p-3 rounded-xl transition-all duration-200 transform active:scale-95 ${
+				className={`p-2.5 md:p-3 rounded-lg md:rounded-xl transition-all duration-200 transform active:scale-95 ${
 					isActive
 						? 'bg-cyan-500 text-white'
 						: 'bg-slate-200 dark:bg-slate-800 text-slate-500 hover:text-cyan-500'
 				}`}
 			>
-				<Icon size={24} />
+				<Icon className='size-5 md:size-6' />
 			</Button>
 			<span className='absolute left-14 dark:bg-slate-800 bg-slate-200 text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap shadow-lg border border-slate-300 dark:border-slate-700 transform scale-y-0 group-hover:scale-y-100 transition-all flex items-center gap-2'>
 				{label}{' '}

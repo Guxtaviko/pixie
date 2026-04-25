@@ -1,4 +1,3 @@
-import type React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
 	COORDS_DEBUG,
@@ -21,6 +20,7 @@ export const Canvas = () => {
 	const [zoom, setZoom] = useLocalStorage<number>('canvas-zoom', DEFAULT_ZOOM)
 	const [isDrawing, setIsDrawing] = useState<boolean>(false)
 	const [coordsBuffer, setCoordsBuffer] = useState<Coordinates[]>([])
+	const activePointerId = useRef<number | null>(null)
 
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const { handleInteraction, handleInterpolatedInteraction, endDrawing } =
@@ -30,24 +30,29 @@ export const Canvas = () => {
 	const canvasHeight = height * pixelSize
 
 	const getCoordinates = useCallback(
-		(e: React.MouseEvent | MouseEvent): Coordinates | null => {
+		(e: React.PointerEvent | PointerEvent): Coordinates | null => {
 			const canvas = canvasRef.current
 			if (!canvas) return null
+
+			const position: Coordinates = { x: e?.clientX, y: e?.clientY }
+			if (!position.x || !position.y) return null
 
 			const rect = canvas.getBoundingClientRect()
 			const scaleX = canvas.width / rect.width
 			const scaleY = canvas.height / rect.height
 
-			const x = Math.floor(((e.clientX - rect.left) * scaleX) / pixelSize)
-			const y = Math.floor(((e.clientY - rect.top) * scaleY) / pixelSize)
+			const x = Math.floor(((position.x - rect.left) * scaleX) / pixelSize)
+			const y = Math.floor(((position.y - rect.top) * scaleY) / pixelSize)
 
 			return { x, y }
 		},
 		[pixelSize],
 	)
 
-	const handleStart = (e: React.MouseEvent) => {
+	const handleStart = (e: React.PointerEvent<HTMLCanvasElement>) => {
 		e.preventDefault()
+		e.currentTarget.setPointerCapture(e.pointerId)
+		activePointerId.current = e.pointerId
 
 		setIsDrawing(true)
 		const coords = getCoordinates(e)
@@ -55,8 +60,14 @@ export const Canvas = () => {
 		handleInteraction(coords)
 	}
 
-	const handleMove = (e: React.MouseEvent) => {
+	const handleMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
 		if (!isDrawing) return
+
+		const isActivePointer =
+			activePointerId.current === null ||
+			e.pointerId === activePointerId.current
+		if (!isActivePointer) return
+
 		e.preventDefault()
 
 		const coords = getCoordinates(e)
@@ -69,7 +80,23 @@ export const Canvas = () => {
 		handleInteraction(coords)
 	}
 
-	const handleEnd = () => {
+	const handleEnd = (e?: React.PointerEvent<HTMLCanvasElement>) => {
+		// Only end drawing if the pointer event belongs to the active pointer
+		if (e) {
+			const isActivePointer =
+				activePointerId.current === null ||
+				e.pointerId === activePointerId.current
+			if (!isActivePointer) return
+
+			e.preventDefault()
+			// Release pointer capture if it's still captured
+			if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+				e.currentTarget.releasePointerCapture(e.pointerId)
+			}
+		}
+
+		activePointerId.current = null
+
 		setIsDrawing(false)
 		if (!isDrawing) return
 
@@ -179,7 +206,7 @@ export const Canvas = () => {
 	}, [coordsBuffer, handleInterpolatedInteraction])
 
 	return (
-		<div className='flex-1 relative overflow-hidden flex items-center justify-center p-8 cursor-crosshair touch-none bg-radial-[at_50%_50%] from-slate-200 to-slate-50 dark:from-slate-800 dark:to-slate-950 '>
+		<div className='flex-1 relative overflow-hidden flex items-center justify-center p-4 md:p-8 cursor-crosshair touch-none bg-radial-[at_50%_50%] from-slate-200 to-slate-50 dark:from-slate-800 dark:to-slate-950'>
 			<div
 				className='relative transition-transform duration-200'
 				style={{ transform: `scale(${zoom})`, imageRendering: 'pixelated' }}
@@ -188,10 +215,10 @@ export const Canvas = () => {
 					ref={canvasRef}
 					width={canvasWidth}
 					height={canvasHeight}
-					onMouseDown={handleStart}
-					onMouseMove={handleMove}
-					onMouseUp={handleEnd}
-					onMouseLeave={handleEnd}
+					onPointerDown={handleStart}
+					onPointerMove={handleMove}
+					onPointerUp={handleEnd}
+					onPointerCancel={handleEnd}
 					className='block bg-slate-950'
 				/>
 			</div>

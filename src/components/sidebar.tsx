@@ -1,5 +1,6 @@
 import {
 	Check as CheckIcon,
+	X as CloseIcon,
 	Palette as ColorIcon,
 	Plus as PlusIcon,
 	Zap as ZapIcon,
@@ -12,7 +13,12 @@ import { Button } from './ui/button'
 import { ColorSelector } from './ui/color-selector'
 import { Layers } from './ui/layers'
 
-export const Sidebar = () => {
+interface SidebarProps {
+	className?: string
+	onClose?: () => void
+}
+
+export const Sidebar = ({ className = '', onClose }: SidebarProps) => {
 	const [isColorSelectorOpen, setIsColorSelectorOpen] = useState(false)
 	const [customColor, setCustomColor] = useState<string | null>(null)
 
@@ -36,13 +42,26 @@ export const Sidebar = () => {
 	}
 
 	return (
-		<aside className='w-72 section border-l flex flex-col py-4 px-2 *:px-2 gap-4'>
+		<aside
+			className={`w-72 section border-l flex flex-col py-4 px-2 *:px-2 gap-4 overflow-visible ${className}`}
+		>
+			{onClose && (
+				<div className='absolute top-2 right-1 z-20 md:hidden'>
+					<Button
+						title='Fechar painel'
+						onClick={onClose}
+						className='p-2 text-slate-500 hover:text-cyan-400 transition-colors'
+					>
+						<CloseIcon size={18} />
+					</Button>
+				</div>
+			)}
 			<h2 className='text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2'>
 				<ColorIcon size={16} />
 				<span>Cores</span>
 			</h2>
 			<div className='relative color-selector-wrapper px-0!'>
-				<div className='custom-scrollbar grid grid-cols-6 gap-1 max-h-36 overflow-y-auto overflow-x-hidden pb-1 px-2'>
+				<div className='custom-scrollbar grid grid-cols-8 md:grid-cols-6 gap-1 max-h-36 overflow-y-auto overflow-x-hidden pb-1 px-2'>
 					{palette.map((hex) => {
 						const brightness = colorBrightness(hex)
 						return (
@@ -75,7 +94,7 @@ export const Sidebar = () => {
 					</Button>
 				</div>
 				{isColorSelectorOpen && (
-					<div className='absolute top-0 left-0 transform -translate-x-full z-30'>
+					<div className='absolute top-full left-0 md:top-0 md:left-0 md:transform md:-translate-x-full z-50'>
 						<ColorSelector
 							showPreview
 							onColorChange={setCustomColor}

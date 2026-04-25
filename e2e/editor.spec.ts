@@ -34,13 +34,47 @@ test('draw + undo + redo flow works', async ({ page }) => {
 	const afterDraw = await readTopLeftPixel(page)
 	await expect(afterDraw).not.toEqual(before)
 
-	await page.getByTitle('Undo').click()
+	await page.getByTitle('Undo', { exact: true }).click()
 	const afterUndo = await readTopLeftPixel(page)
 	await expect(afterUndo).toEqual(before)
 
-	await page.getByTitle('Redo').click()
+	await page.getByTitle('Redo', { exact: true }).click()
 	const afterRedo = await readTopLeftPixel(page)
 	await expect(afterRedo).toEqual(afterDraw)
+})
+
+test('drag drawing paints multiple pixels', async ({ page }) => {
+	const canvas = page.locator('canvas')
+	const box = await canvas.boundingBox()
+	if (!box) throw new Error('Canvas bounding box not found')
+
+	const countPainted = async () => {
+		return page.evaluate(() => {
+			const canvas = document.querySelector('canvas')
+			if (!(canvas instanceof HTMLCanvasElement)) return 0
+
+			const ctx = canvas.getContext('2d')
+			if (!ctx) return 0
+
+			let painted = 0
+			for (let i = 0; i < 7; i++) {
+				const x = 12 + i * 16
+				const [r, g, b, a] = ctx.getImageData(x, 12, 1, 1).data
+				const isDefaultCell = r > 220 && g > 220 && b > 220
+				if (a > 0 && !isDefaultCell) painted++
+			}
+
+			return painted
+		})
+	}
+
+	await page.mouse.move(box.x + 12, box.y + 12)
+	await page.mouse.down()
+	await page.mouse.move(box.x + 108, box.y + 12, { steps: 10 })
+	await page.mouse.up()
+
+	const paintedCount = await countPainted()
+	await expect(paintedCount).toBeGreaterThan(2)
 })
 
 test('layer flow supports adding a new layer', async ({ page }) => {

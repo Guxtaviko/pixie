@@ -118,14 +118,14 @@ export const Layer = ({ data, allowDelete = false }: LayerProps) => {
 			/>
 			<Button
 				onClick={(e) => handleClone(e, data.id)}
-				className='p-1.5 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 opacity-0 group-hover:opacity-100 rounded transition-colors'
+				className='p-1.5 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 opacity-100 md:opacity-0 md:group-hover:opacity-100 rounded transition-colors'
 			>
 				<CloneIcon size={14} />
 			</Button>
 			{allowDelete && (
 				<Button
 					onClick={(e) => handleRemove(e, data.id)}
-					className='p-1.5 text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 rounded transition-colors'
+					className='p-1.5 text-slate-500 hover:text-red-400 opacity-100 md:opacity-0 md:group-hover:opacity-100 rounded transition-colors'
 				>
 					<DeleteIcon size={14} />
 				</Button>

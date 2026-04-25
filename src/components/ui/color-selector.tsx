@@ -26,9 +26,9 @@ export const ColorSelector = ({
 			const target = event.target as HTMLElement
 			const activator = target.closest('.color-selector-activator')
 			const wrapper = activator?.closest('.color-selector-wrapper')
-			const wrapperMatches = wrapper?.querySelector('#color-selector')
+			const wrapperMatches = wrapper?.querySelector('.color-selector-panel')
 
-			if (target.closest('#color-selector') || wrapperMatches) return
+			if (target.closest('.color-selector-panel') || wrapperMatches) return
 
 			handleClose()
 		}
@@ -133,10 +133,7 @@ export const ColorSelector = ({
 	}
 
 	return (
-		<div
-			id='color-selector'
-			className='bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-4 w-fit flex gap-4'
-		>
+		<div className='color-selector-panel bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-3 md:p-4 w-fit flex gap-3 md:gap-4'>
 			<div className='flex flex-col gap-3'>
 				<div
 					role='application'
@@ -145,7 +142,7 @@ export const ColorSelector = ({
 					onMouseMove={handleMouseMove('color')}
 					onMouseUp={handleMouseUp}
 					onMouseLeave={handleMouseUp}
-					className={`relative min-w-36 w-full h-36 cursor-crosshair rounded-md`}
+					className='relative min-w-0 w-full h-36 cursor-crosshair rounded-md'
 					style={{
 						backgroundColor: `hsl(${hue}, 100%, 50%)`,
 						backgroundImage: `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent)`,
@@ -192,7 +189,7 @@ export const ColorSelector = ({
 					{showPreview && (
 						// Color preview box
 						<div
-							className='min-w-10 h-full mb-2 rounded-md border-2 border-slate-200 dark:border-slate-800'
+							className='w-1/2 sm:min-w-10 sm:w-auto h-10 sm:h-full rounded-md border-2 border-slate-200 dark:border-slate-800'
 							style={{
 								backgroundColor: customColor,
 							}}
@@ -203,7 +200,7 @@ export const ColorSelector = ({
 						value={customColor}
 						maxLength={7}
 						onChange={handleColorInputChange}
-						className='w-36 p-1 text-center text-sm rounded border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 outline-none'
+						className='w-full sm:w-36 p-1 text-center text-sm rounded border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 outline-none'
 					/>
 				</div>
 			</div>

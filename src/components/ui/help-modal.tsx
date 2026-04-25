@@ -61,7 +61,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
 					</li>
 				</ul>
 			</div>
-			<div className='mt-6'>
+			<div className='hidden md:block mt-6'>
 				<h3 className='font-medium text-slate-800 dark:text-slate-200 uppercase tracking-wider'>
 					Atalhos
 				</h3>

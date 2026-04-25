@@ -3,6 +3,7 @@ import {
 	DndContext,
 	type DragEndEvent,
 	MouseSensor,
+	TouchSensor,
 	useSensor,
 	useSensors,
 } from '@dnd-kit/core'
@@ -27,6 +28,12 @@ export const Layers = () => {
 		useSensor(MouseSensor, {
 			activationConstraint: {
 				distance: 10,
+			},
+		}),
+		useSensor(TouchSensor, {
+			activationConstraint: {
+				delay: 120,
+				tolerance: 8,
 			},
 		}),
 	)
