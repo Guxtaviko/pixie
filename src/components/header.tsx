@@ -85,6 +85,7 @@ export const Header = () => {
 				</div>
 				<div className='flex items-center gap-4'>
 					<Button
+						title='Undo'
 						disabled={!canUndo}
 						onClick={handleUndo}
 						className='p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 disabled:opacity-30 transition-colors'
@@ -93,6 +94,7 @@ export const Header = () => {
 					</Button>
 
 					<Button
+						title='Redo'
 						disabled={!canRedo}
 						onClick={handleRedo}
 						className='p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 disabled:opacity-30 transition-colors'
