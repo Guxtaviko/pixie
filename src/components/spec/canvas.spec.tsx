@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+
 vi.mock('../../config/settings', async () => {
 	const actual = await vi.importActual('../../config/settings')
 	return {
@@ -7,6 +8,7 @@ vi.mock('../../config/settings', async () => {
 		GRID_FIT_MULTIPLIER: 0.8,
 	}
 })
+
 import { PixieTestProviders } from '../../spec/test-providers'
 import { Canvas } from '../canvas'
 
