@@ -53,6 +53,9 @@ export const DEFAULT_LAYER_OPTIONS: Omit<Layer, 'id' | 'name'> = {
 	opacity: 1,
 	data: [],
 }
+export const PIXEL_PERFECT_PREVIEW = false
+export const LAYER_PREVIEW_SIZE = 96
+export const LAYER_PREVIEW_PADDING = 8
 
 // Debug settings
 export const COORDS_DEBUG = false

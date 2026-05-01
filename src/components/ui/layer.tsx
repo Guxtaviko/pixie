@@ -8,10 +8,15 @@ import {
 	Eye as VisibleIcon,
 } from 'lucide-react'
 import { useState } from 'react'
+import {
+	LAYER_PREVIEW_PADDING,
+	LAYER_PREVIEW_SIZE,
+} from '../../config/settings'
 import { LayerContext } from '../../contexts/layer-context'
 import { useSafeContext } from '../../hooks'
-import type { Layer as LayerI } from '../../types'
+import type { Coordinates, Layer as LayerI } from '../../types'
 import { Button } from './button'
+import { LayerPreview } from './layer-preview'
 
 interface LayerProps {
 	data: LayerI
@@ -20,6 +25,7 @@ interface LayerProps {
 
 export const Layer = ({ data, allowDelete = false }: LayerProps) => {
 	const [isEditing, setIsEditing] = useState(false)
+	const [previewPos, setPreviewPos] = useState<Coordinates | null>(null)
 
 	const {
 		setNodeRef,
@@ -73,12 +79,30 @@ export const Layer = ({ data, allowDelete = false }: LayerProps) => {
 
 	const handleBlur = () => setIsEditing(false)
 
+	const handlePointerEnter = (e: React.PointerEvent<HTMLDivElement>) => {
+		if (isDragging) return
+		if (e.pointerType === 'touch') return // No "hover" on mobile
+
+		const rect = e.currentTarget.getBoundingClientRect()
+		const previewSize = LAYER_PREVIEW_SIZE + LAYER_PREVIEW_PADDING
+		const gap = 8
+
+		setPreviewPos({
+			x: rect.left - previewSize - gap,
+			y: rect.top + rect.height / 2 - previewSize / 2,
+		})
+	}
+
+	const handlePointerLeave = () => setPreviewPos(null)
+
 	return (
 		// biome-ignore lint/a11y: button inside button situation
 		<div
 			ref={setNodeRef}
 			onClick={() => setCurrentLayerId(data.id)}
-			className={`flex items-center p-2 rounded-lg border transition-colors group cursor-pointer ${
+			onPointerEnter={handlePointerEnter}
+			onPointerLeave={handlePointerLeave}
+			className={`relative flex items-center p-2 rounded-lg border transition-colors group cursor-pointer ${
 				currentLayerId === data.id
 					? 'border-cyan-500 bg-cyan-500/10'
 					: 'border-transparent hover:bg-slate-200 dark:hover:bg-slate-800'
@@ -87,6 +111,7 @@ export const Layer = ({ data, allowDelete = false }: LayerProps) => {
 			{...listeners}
 			style={style}
 		>
+			{!isDragging && <LayerPreview data={data.data} pos={previewPos} />}
 			<Button
 				onClick={(e) => handleVisibilityToggle(e, data.id)}
 				className='p-1.5 hover:bg-slate-500/25 text-slate-700 dark:text-slate-300 rounded transition-colors'
