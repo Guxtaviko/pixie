@@ -1,4 +1,11 @@
-import { describe, expect, it } from 'vitest'
+import { vi, describe, expect, it } from 'vitest'
+vi.mock('../../config/settings', async () => {
+	const actual = await vi.importActual('../../config/settings')
+	return {
+		...actual,
+		GRID_FIT_MULTIPLIER: 0.8,
+	}
+})
 import { calculatePixelSize } from '../calculate-pixel-size'
 
 describe('calculate-pixel-size', () => {
