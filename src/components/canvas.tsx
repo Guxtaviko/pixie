@@ -11,16 +11,20 @@ import { LayerContext } from '../contexts/layer-context'
 import { useLocalStorage, useSafeContext } from '../hooks'
 import { UsePixie } from '../hooks/use-pixie'
 import type { Coordinates } from '../types'
+import { calculatePixelSize } from '../utils/calculate-pixel-size'
 import { CanvasZoom } from './ui/canvas-zoom'
 
 export const Canvas = () => {
-	const { width, height, showGrid, pixelSize } = useSafeContext(GridContext)
+	const { width, height, showGrid, pixelSize, setAutoPixelSize } =
+		useSafeContext(GridContext)
 	const { theme } = useSafeContext(ThemeContext)
 	const { layers } = useSafeContext(LayerContext)
 	const [zoom, setZoom] = useLocalStorage<number>('canvas-zoom', DEFAULT_ZOOM)
 	const [isDrawing, setIsDrawing] = useState<boolean>(false)
 	const [coordsBuffer, setCoordsBuffer] = useState<Coordinates[]>([])
 	const activePointerId = useRef<number | null>(null)
+	const containerRef = useRef<HTMLDivElement>(null)
+	const [availableSize, setAvailableSize] = useState({ width: 0, height: 0 })
 
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const { handleInteraction, handleInterpolatedInteraction, endDrawing } =
@@ -48,6 +52,43 @@ export const Canvas = () => {
 		},
 		[pixelSize],
 	)
+
+	useEffect(() => {
+		const container = containerRef.current
+		if (!container || typeof ResizeObserver === 'undefined') return
+
+		const observer = new ResizeObserver((entries) => {
+			const entry = entries[0]
+			if (!entry) return
+
+			const nextSize = {
+				width: entry.contentRect.width,
+				height: entry.contentRect.height,
+			}
+
+			setAvailableSize((prev) =>
+				prev.width === nextSize.width && prev.height === nextSize.height
+					? prev
+					: nextSize,
+			)
+		})
+
+		observer.observe(container)
+		return () => observer.disconnect()
+	}, [])
+
+	useEffect(() => {
+		if (availableSize.width <= 0 || availableSize.height <= 0) return
+
+		const nextAutoPixelSize = calculatePixelSize({
+			availableWidth: availableSize.width,
+			availableHeight: availableSize.height,
+			gridWidth: width,
+			gridHeight: height,
+		})
+
+		setAutoPixelSize(nextAutoPixelSize)
+	}, [availableSize, width, height, setAutoPixelSize])
 
 	const handleStart = (e: React.PointerEvent<HTMLCanvasElement>) => {
 		e.preventDefault()
@@ -206,7 +247,10 @@ export const Canvas = () => {
 	}, [coordsBuffer, handleInterpolatedInteraction])
 
 	return (
-		<div className='flex-1 relative overflow-hidden flex items-center justify-center p-4 md:p-8 cursor-crosshair touch-none bg-radial-[at_50%_50%] from-slate-200 to-slate-50 dark:from-slate-800 dark:to-slate-950'>
+		<div
+			ref={containerRef}
+			className='flex-1 relative overflow-hidden flex items-center justify-center p-4 md:p-8 cursor-crosshair touch-none bg-radial-[at_50%_50%] from-slate-200 to-slate-50 dark:from-slate-800 dark:to-slate-950'
+		>
 			<div
 				className='relative transition-transform duration-200'
 				style={{ transform: `scale(${zoom})`, imageRendering: 'pixelated' }}

@@ -4,8 +4,10 @@ import {
 	Grid3X3 as Grid64Icon,
 	Minus as MinusIcon,
 	Plus as PlusIcon,
+	RotateCcw as RestoreIcon,
 } from 'lucide-react'
 import { useState } from 'react'
+import { DEFAULT_PIXEL_SIZE } from '../../config/settings'
 import { GridContext } from '../../contexts/grid-context'
 import { HistoryContext } from '../../contexts/history-context'
 import { LayerContext } from '../../contexts/layer-context'
@@ -37,6 +39,12 @@ export const GridModal = ({ onClose }: GridModalProps) => {
 		width: currentWidth,
 		height: currentHeight,
 		setSize,
+		pixelSize,
+		pixelSizeMode,
+		manualPixelSize,
+		setPixelSize,
+		setPixelSizeMode,
+		resetPixelSize,
 	} = useSafeContext(GridContext)
 	const { clearLayers } = useSafeContext(LayerContext)
 	const { clearHistory } = useSafeContext(HistoryContext)
@@ -60,13 +68,76 @@ export const GridModal = ({ onClose }: GridModalProps) => {
 		onClose()
 	}
 
+	const handlePixelSizeChange = (value: number) => {
+		setPixelSize(Math.max(1, value))
+	}
+
 	return (
 		<Modal onClose={onClose}>
 			<h2 className='text-lg font-bold'>Configurar Grade</h2>
-			<p className='text-sm text-slate-700 dark:text-slate-300'>
+			<p className='text-sm text-slate-500 mb-5'>
+				Configure o tamanho da grade e os pixels.
+			</p>
+			<h3 className='font-semibold text-slate-900 dark:text-slate-100 mb-3'>
+				Tamanho dos pixels
+			</h3>
+			<div className='flex flex-wrap gap-2 mb-3'>
+				<Button
+					onClick={() => setPixelSizeMode('auto')}
+					className={`px-3 py-2 rounded-lg border-2 text-sm transition-colors ${pixelSizeMode === 'auto' ? 'border-cyan-500 text-cyan-400' : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-800 hover:dark:text-slate-200 hover:bg-slate-50 hover:dark:bg-slate-950'}`}
+				>
+					Auto-fit
+				</Button>
+				<Button
+					onClick={() => setPixelSizeMode('manual')}
+					className={`px-3 py-2 rounded-lg border-2 text-sm transition-colors ${pixelSizeMode === 'manual' ? 'border-cyan-500 text-cyan-400' : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-800 hover:dark:text-slate-200 hover:bg-slate-50 hover:dark:bg-slate-950'}`}
+				>
+					Manual
+				</Button>
+			</div>
+			{pixelSizeMode === 'auto' ? (
+				<p className='text-sm text-slate-500 mb-5'>
+					Auto-fit ativo. Tamanho atual: {pixelSize}px.
+				</p>
+			) : (
+				<div className='flex items-center gap-2 mb-5'>
+					<Button
+						disabled={manualPixelSize <= 1}
+						className='custom-grid-button'
+						onClick={() => handlePixelSizeChange(manualPixelSize - 1)}
+					>
+						<MinusIcon size={20} />
+					</Button>
+					<input
+						type='number'
+						value={manualPixelSize}
+						onChange={(e) => handlePixelSizeChange(Number(e.target.value) || 1)}
+						className='custom-grid-input'
+						min={1}
+					/>
+					<Button
+						className='custom-grid-button'
+						onClick={() => handlePixelSizeChange(manualPixelSize + 1)}
+					>
+						<PlusIcon size={20} />
+					</Button>
+					{manualPixelSize !== DEFAULT_PIXEL_SIZE && (
+						<Button
+							onClick={resetPixelSize}
+							className='inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-cyan-400 hover:border-cyan-500/50 transition-colors ml-2'
+						>
+							<RestoreIcon size={16} />
+						</Button>
+					)}
+				</div>
+			)}
+			<h3 className='font-semibold text-slate-900 dark:text-slate-100 mt-6'>
+				Dimensões da grade
+			</h3>
+			<p className='text-sm text-slate-500 mb-5'>
 				Mudar o tamanho reiniciará todas as camadas.
 			</p>
-			<div className='grid grid-cols-3 gap-3 my-6'>
+			<div className='grid grid-cols-3 gap-3 mb-6'>
 				{defaultOptions.map(({ size, icon: Icon }) => (
 					<Button
 						key={size}

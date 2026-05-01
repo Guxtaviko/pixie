@@ -32,8 +32,13 @@ export const MAX_GRID_SIZE = 128
 
 // Canvas settings
 export const DEFAULT_PIXEL_SIZE = 24
+export const DEFAULT_PIXEL_SIZE_MODE = 'auto' as const
+export const MIN_PIXEL_SIZE = 1
+export const GRID_FIT_MULTIPLIER = 0.9
 export const DARK_CHECKER = ['#1e293b', '#334155']
 export const LIGHT_CHECKER = ['#cbd5e1', '#e2e8f0']
+
+export type PixelSizeMode = 'auto' | 'manual'
 
 // Zoom settings
 export const DEFAULT_ZOOM = 1
