@@ -1,6 +1,7 @@
 export type Theme = 'light' | 'dark'
 
 export type Tool = 'brush' | 'eraser' | 'fill' | 'picker'
+export type BrushShape = 'square' | 'circle'
 
 export type Layer = {
 	id: string

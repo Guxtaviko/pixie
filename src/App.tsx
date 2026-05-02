@@ -4,6 +4,7 @@ import { Header } from './components/header'
 import { Sidebar } from './components/sidebar'
 import { SidebarWrapper } from './components/sidebar-wrapper'
 import { ToolBar } from './components/tool-bar'
+import { ToolOptionsBar } from './components/tool-options-bar'
 import { useMobile } from './hooks/use-mobile'
 
 export const App = () => {
@@ -18,7 +19,10 @@ export const App = () => {
 			<Header onToggleSidebar={toggleSidebar} />
 			<main className='flex h-[calc(100dvh-4rem)] md:h-[calc(100vh-4rem)] relative flex-col md:flex-row'>
 				<ToolBar />
-				<Canvas />
+				<div className='flex-1 relative flex flex-col overflow-hidden'>
+					<ToolOptionsBar />
+					<Canvas />
+				</div>
 				{isMobile ? (
 					<SidebarWrapper isOpen={isSidebarOpen} onClose={closeSidebar}>
 						<Sidebar

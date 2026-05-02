@@ -1,14 +1,15 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { ColorContext } from '../contexts/color-context'
 import { GridContext } from '../contexts/grid-context'
 import { HistoryContext } from '../contexts/history-context'
 import { LayerContext } from '../contexts/layer-context'
 import { ToolContext } from '../contexts/tool-context'
 import type { Coordinates } from '../types'
+import { getBrushFootprint } from '../utils/brush'
 import { useSafeContext } from './use-safe-context'
 
 export function UsePixie() {
-	const { tool } = useSafeContext(ToolContext)
+	const { tool, brushSize, brushShape } = useSafeContext(ToolContext)
 	const { primary, setColor, addToPalette } = useSafeContext(ColorContext)
 	const { width, height } = useSafeContext(GridContext)
 	const { layers, currentLayerId, updateLayer } = useSafeContext(LayerContext)
@@ -29,18 +30,32 @@ export function UsePixie() {
 		[width, height],
 	)
 
+	const brushFootprint = useMemo(
+		() => getBrushFootprint(brushSize, brushShape),
+		[brushSize, brushShape],
+	)
+
 	const drawPixel = useCallback(
 		(x: number, y: number, color = primary) => {
 			if (!validateCoordinates(x, y)) return
 			if (!isLayerDrawable) return
 
 			const newData = getLayerData()
-			if (!newData[y]) newData[y] = []
+			let hasChanges = false
 
-			if (newData[y][x] === color) return // No change
+			for (const offset of brushFootprint) {
+				const nx = x + offset.x
+				const ny = y + offset.y
 
-			newData[y][x] = color
-			updateLayer(layer.id, { data: newData })
+				if (!validateCoordinates(nx, ny)) continue
+				if (!newData[ny]) newData[ny] = []
+				if (newData[ny][nx] === color) continue
+
+				newData[ny][nx] = color
+				hasChanges = true
+			}
+
+			if (hasChanges) updateLayer(layer.id, { data: newData })
 		},
 		[
 			layer,
@@ -49,6 +64,7 @@ export function UsePixie() {
 			getLayerData,
 			validateCoordinates,
 			isLayerDrawable,
+			brushFootprint,
 		],
 	)
 
@@ -60,13 +76,17 @@ export function UsePixie() {
 			let hasChanges = false
 
 			coords.forEach(({ x, y }) => {
-				if (!validateCoordinates(x, y)) return
+				for (const offset of brushFootprint) {
+					const nx = x + offset.x
+					const ny = y + offset.y
 
-				if (!newData[y]) newData[y] = []
-				if (newData[y][x] === color) return // No change
+					if (!validateCoordinates(nx, ny)) continue
+					if (!newData[ny]) newData[ny] = []
+					if (newData[ny][nx] === color) continue
 
-				newData[y][x] = color
-				hasChanges = true
+					newData[ny][nx] = color
+					hasChanges = true
+				}
 			})
 
 			if (hasChanges) updateLayer(layer.id, { data: newData })
@@ -78,6 +98,7 @@ export function UsePixie() {
 			getLayerData,
 			validateCoordinates,
 			isLayerDrawable,
+			brushFootprint,
 		],
 	)
 

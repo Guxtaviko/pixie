@@ -1,4 +1,4 @@
-import type { Layer, Tool } from '../types'
+import type { BrushShape, Layer, Tool } from '../types'
 
 // Color settings
 const WHITE = '#ffffff'
@@ -62,4 +62,8 @@ export const COORDS_DEBUG = false
 
 // Other settings
 export const DEFAULT_TOOL: Tool = 'brush'
+export const DEFAULT_BRUSH_SIZE = 1
+export const DEFAULT_BRUSH_SHAPE: BrushShape = 'circle'
+export const MIN_BRUSH_SIZE = 1
+export const MAX_BRUSH_SIZE = 10
 export const MAX_HISTORY_LENGTH = 30

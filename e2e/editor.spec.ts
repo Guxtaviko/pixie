@@ -77,6 +77,43 @@ test('drag drawing paints multiple pixels', async ({ page }) => {
 	await expect(paintedCount).toBeGreaterThan(2)
 })
 
+test('brush size and shape changes footprint', async ({ page }) => {
+	const canvas = page.locator('canvas')
+	const box = await canvas.boundingBox()
+	if (!box) throw new Error('Canvas bounding box not found')
+
+	await page.getByTitle('Square brush').click()
+	await page.locator('input[type="range"]').fill('5')
+
+	const countPainted = async () => {
+		return page.evaluate(() => {
+			const canvas = document.querySelector('canvas')
+			if (!(canvas instanceof HTMLCanvasElement)) return 0
+
+			const ctx = canvas.getContext('2d')
+			if (!ctx) return 0
+
+			let painted = 0
+			// Sample points around click target
+			for (let y = 12; y < 80; y += 4) {
+				for (let x = 12; x < 80; x += 4) {
+					const [r, g, b, a] = ctx.getImageData(x, y, 1, 1).data
+					const isDefaultCell = r > 220 && g > 220 && b > 220
+					if (a > 0 && !isDefaultCell) painted++
+				}
+			}
+
+			return painted
+		})
+	}
+
+	await page.mouse.click(box.x + 36, box.y + 36)
+
+	const paintedCount = await countPainted()
+	// Should hit multiple sampling points due to thick brush size
+	expect(paintedCount).toBeGreaterThan(10)
+})
+
 test('layer flow supports adding a new layer', async ({ page }) => {
 	const layerNames = page.locator("input[id^='data-'][id$='-name']")
 	await expect(layerNames).toHaveCount(1)

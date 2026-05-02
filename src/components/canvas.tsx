@@ -5,12 +5,15 @@ import {
 	DEFAULT_ZOOM,
 	LIGHT_CHECKER,
 } from '../config/settings'
-import { ThemeContext } from '../contexts'
+import { ColorContext } from '../contexts/color-context'
 import { GridContext } from '../contexts/grid-context'
 import { LayerContext } from '../contexts/layer-context'
+import { ThemeContext } from '../contexts/theme-context'
+import { ToolContext } from '../contexts/tool-context'
 import { useLocalStorage, useSafeContext } from '../hooks'
 import { UsePixie } from '../hooks/use-pixie'
 import type { Coordinates } from '../types'
+import { getBrushFootprint } from '../utils/brush'
 import { calculatePixelSize } from '../utils/calculate-pixel-size'
 import { CanvasZoom } from './ui/canvas-zoom'
 
@@ -19,9 +22,12 @@ export const Canvas = () => {
 		useSafeContext(GridContext)
 	const { theme } = useSafeContext(ThemeContext)
 	const { layers } = useSafeContext(LayerContext)
+	const { tool, brushSize, brushShape } = useSafeContext(ToolContext)
+	const { primary } = useSafeContext(ColorContext)
 	const [zoom, setZoom] = useLocalStorage<number>('canvas-zoom', DEFAULT_ZOOM)
 	const [isDrawing, setIsDrawing] = useState<boolean>(false)
 	const [coordsBuffer, setCoordsBuffer] = useState<Coordinates[]>([])
+	const [hoverCoord, setHoverCoord] = useState<Coordinates | null>(null)
 	const activePointerId = useRef<number | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [availableSize, setAvailableSize] = useState({ width: 0, height: 0 })
@@ -98,10 +104,14 @@ export const Canvas = () => {
 		setIsDrawing(true)
 		const coords = getCoordinates(e)
 		if (!coords) return
+		setHoverCoord(coords)
 		handleInteraction(coords)
 	}
 
 	const handleMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+		const coords = getCoordinates(e)
+		setHoverCoord(coords)
+
 		if (!isDrawing) return
 
 		const isActivePointer =
@@ -111,7 +121,6 @@ export const Canvas = () => {
 
 		e.preventDefault()
 
-		const coords = getCoordinates(e)
 		if (!coords) return
 		setCoordsBuffer((prev) =>
 			prev.find((c) => c.x === coords.x && c.y === coords.y)
@@ -143,6 +152,11 @@ export const Canvas = () => {
 
 		if (coordsBuffer.length) setCoordsBuffer([])
 		endDrawing()
+	}
+
+	const handleLeave = (e: React.PointerEvent<HTMLCanvasElement>) => {
+		setHoverCoord(null)
+		handleEnd(e)
 	}
 
 	const draw = useCallback(() => {
@@ -202,6 +216,32 @@ export const Canvas = () => {
 			}
 		}
 
+		// Footprint preview
+		if (hoverCoord && (tool === 'brush' || tool === 'eraser')) {
+			const footprint = getBrushFootprint(brushSize, brushShape)
+			const isEraser = tool === 'eraser'
+			ctx.fillStyle = isEraser ? 'rgba(255, 255, 255, 0.4)' : primary
+			ctx.strokeStyle = isEraser
+				? 'rgba(255, 255, 255, 0.8)'
+				: theme === 'dark'
+					? 'rgba(255, 255, 255, 0.5)'
+					: 'rgba(0, 0, 0, 0.5)'
+			ctx.lineWidth = 1
+			if (!isEraser) {
+				ctx.globalAlpha = 0.5
+			}
+
+			for (const offset of footprint) {
+				const nx = hoverCoord.x + offset.x
+				const ny = hoverCoord.y + offset.y
+				if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+					ctx.fillRect(nx * pixelSize, ny * pixelSize, pixelSize, pixelSize)
+					ctx.strokeRect(nx * pixelSize, ny * pixelSize, pixelSize, pixelSize)
+				}
+			}
+			ctx.globalAlpha = 1.0 // reset
+		}
+
 		// Writes coordinates for debugging
 		if (COORDS_DEBUG) {
 			const fill = theme === 'dark' ? '#ffffff' : '#000000'
@@ -218,7 +258,19 @@ export const Canvas = () => {
 				}
 			}
 		}
-	}, [width, height, showGrid, theme, pixelSize, layers])
+	}, [
+		width,
+		height,
+		showGrid,
+		theme,
+		pixelSize,
+		layers,
+		hoverCoord,
+		tool,
+		brushSize,
+		brushShape,
+		primary,
+	])
 
 	useEffect(() => {
 		draw()
@@ -263,6 +315,7 @@ export const Canvas = () => {
 					onPointerMove={handleMove}
 					onPointerUp={handleEnd}
 					onPointerCancel={handleEnd}
+					onPointerLeave={handleLeave}
 					className='block bg-slate-950'
 				/>
 			</div>
