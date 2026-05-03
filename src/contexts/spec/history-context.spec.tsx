@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react'
 import { type PropsWithChildren, useContext } from 'react'
 import { describe, expect, it } from 'vitest'
-import type { Layer } from '../../types'
-import { HistoryContext, HistoryProvider } from '../history-context'
+import { HistoryContext, HistoryProvider } from '@/contexts/history-context'
+import type { Layer } from '@/types'
 
 const wrapper = ({ children }: PropsWithChildren) => (
 	<HistoryProvider>{children}</HistoryProvider>

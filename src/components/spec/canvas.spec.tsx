@@ -9,8 +9,8 @@ vi.mock('../../config/settings', async () => {
 	}
 })
 
-import { PixieTestProviders } from '../../spec/test-providers'
-import { Canvas } from '../canvas'
+import { Canvas } from '@/components/canvas'
+import { PixieTestProviders } from '@/spec/test-providers'
 
 describe('Canvas', () => {
 	afterEach(() => {

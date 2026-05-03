@@ -1,6 +1,6 @@
 import { X as CloseIcon } from 'lucide-react'
-import { UseHotkey } from '../../hooks'
-import { Button } from './button'
+import { Button } from '@/components/ui/button'
+import { UseHotkey } from '@/hooks'
 
 interface ModalProps {
 	onClose: () => void

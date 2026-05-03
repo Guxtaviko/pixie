@@ -7,13 +7,13 @@ import {
 	RotateCcw as RestoreIcon,
 } from 'lucide-react'
 import { useState } from 'react'
-import { DEFAULT_PIXEL_SIZE } from '../../config/settings'
-import { GridContext } from '../../contexts/grid-context'
-import { HistoryContext } from '../../contexts/history-context'
-import { LayerContext } from '../../contexts/layer-context'
-import { useSafeContext } from '../../hooks'
-import { Button } from './button'
-import { Modal } from './modal'
+import { Button } from '@/components/ui/button'
+import { Modal } from '@/components/ui/modal'
+import { DEFAULT_PIXEL_SIZE } from '@/config/settings'
+import { GridContext } from '@/contexts/grid-context'
+import { HistoryContext } from '@/contexts/history-context'
+import { LayerContext } from '@/contexts/layer-context'
+import { useSafeContext } from '@/hooks'
 
 interface GridModalProps {
 	onClose: () => void
@@ -46,7 +46,7 @@ export const GridModal = ({ onClose }: GridModalProps) => {
 		setPixelSizeMode,
 		resetPixelSize,
 	} = useSafeContext(GridContext)
-	const { clearLayers } = useSafeContext(LayerContext)
+	const { resetLayers } = useSafeContext(LayerContext)
 	const { clearHistory } = useSafeContext(HistoryContext)
 	const [width, setWidth] = useState<number>(currentWidth)
 	const [height, setHeight] = useState<number>(currentHeight)
@@ -63,7 +63,7 @@ export const GridModal = ({ onClose }: GridModalProps) => {
 		}
 
 		setSize(width, height)
-		clearLayers()
+		resetLayers()
 		clearHistory()
 		onClose()
 	}

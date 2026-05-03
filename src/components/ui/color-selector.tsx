@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ColorContext } from '../../contexts/color-context'
-import { UseHotkey, useSafeContext } from '../../hooks'
-import { hexToHSB, hsbToHex } from '../../utils/color-converter'
+import { ColorContext } from '@/contexts/color-context'
+import { UseHotkey, useSafeContext } from '@/hooks'
+import { hexToHSB, hsbToHex } from '@/utils/color-converter'
 
 interface ColorSelectorProps {
 	showPreview?: boolean

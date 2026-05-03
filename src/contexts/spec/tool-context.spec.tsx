@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { type PropsWithChildren, useContext } from 'react'
 import { describe, expect, it } from 'vitest'
-import { ToolContext, ToolProvider } from '../tool-context'
+import { ToolContext, ToolProvider } from '@/contexts/tool-context'
 
 const wrapper = ({ children }: PropsWithChildren) => (
 	<ToolProvider>{children}</ToolProvider>

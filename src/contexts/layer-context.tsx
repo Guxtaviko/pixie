@@ -1,9 +1,9 @@
 import { createContext, type SetStateAction, useEffect } from 'react'
 import { v4 as uuid } from 'uuid'
-import { DEFAULT_LAYER_OPTIONS } from '../config/settings'
-import { useLocalStorage, useSafeContext } from '../hooks'
-import type { Layer } from '../types'
-import { HistoryContext } from './history-context'
+import { DEFAULT_LAYER_OPTIONS } from '@/config/settings'
+import { HistoryContext } from '@/contexts/history-context'
+import { useLocalStorage, useSafeContext } from '@/hooks'
+import type { Layer } from '@/types'
 
 type LayerContextType = {
 	layers: Layer[]
@@ -17,6 +17,7 @@ type LayerContextType = {
 	updateLayer: (id: string, updatedLayer: Partial<Layer>) => void
 	cloneLayer: (id: string) => void
 	clearLayers: () => void
+	resetLayers: () => void
 	getMerged: () => Record<number, Record<number, string>>
 }
 
@@ -32,6 +33,7 @@ const LayerContext = createContext<LayerContextType>({
 	updateLayer: () => null,
 	cloneLayer: () => null,
 	clearLayers: () => null,
+	resetLayers: () => null,
 	getMerged: () => ({}),
 })
 
@@ -124,6 +126,18 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 		saveToHistory(newLayers)
 	}
 
+	const resetLayers = () => {
+		const newLayer: Layer = {
+			id: uuid(),
+			name: 'Camada 1',
+			...DEFAULT_LAYER_OPTIONS,
+		}
+
+		setLayers([newLayer])
+		setCurrentLayerId(newLayer.id)
+		saveToHistory([newLayer])
+	}
+
 	const getMerged = () => {
 		const mergedData: Record<number, Record<number, string>> = {}
 		layers.forEach((layer) => {
@@ -157,6 +171,7 @@ const LayerProvider = ({ children }: { children: React.ReactNode }) => {
 				updateLayer,
 				cloneLayer,
 				clearLayers,
+				resetLayers,
 				getMerged,
 			}}
 		>

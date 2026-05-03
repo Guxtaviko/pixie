@@ -1,8 +1,8 @@
 import { Circle as CircleIcon, Square as SquareIcon } from 'lucide-react'
-import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from '../config/settings'
-import { ToolContext } from '../contexts/tool-context'
-import { useSafeContext } from '../hooks'
-import { Button } from './ui/button'
+import { Button } from '@/components/ui/button'
+import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from '@/config/settings'
+import { ToolContext } from '@/contexts/tool-context'
+import { useSafeContext } from '@/hooks'
 
 export const ToolOptionsBar = () => {
 	const { tool, brushSize, setBrushSize, brushShape, setBrushShape } =

@@ -1,12 +1,12 @@
 import { act, renderHook } from '@testing-library/react'
 import { useContext } from 'react'
 import { describe, expect, it } from 'vitest'
-import { ColorContext } from '../../contexts/color-context'
-import { GridContext } from '../../contexts/grid-context'
-import { LayerContext } from '../../contexts/layer-context'
-import { ToolContext } from '../../contexts/tool-context'
-import { PixieTestProviders } from '../../spec/test-providers'
-import { UsePixie } from '../use-pixie'
+import { ColorContext } from '@/contexts/color-context'
+import { GridContext } from '@/contexts/grid-context'
+import { LayerContext } from '@/contexts/layer-context'
+import { ToolContext } from '@/contexts/tool-context'
+import { UsePixie } from '@/hooks/use-pixie'
+import { PixieTestProviders } from '@/spec/test-providers'
 
 describe('UsePixie', () => {
 	it('draws a pixel on active layer with current primary color', () => {

@@ -8,7 +8,7 @@ vi.mock('../../config/settings', async () => {
 	}
 })
 
-import { calculatePixelSize } from '../calculate-pixel-size'
+import { calculatePixelSize } from '@/utils/calculate-pixel-size'
 
 describe('calculate-pixel-size', () => {
 	it('returns default pixel size for invalid grid sizes', () => {

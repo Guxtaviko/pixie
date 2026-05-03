@@ -1,12 +1,7 @@
 import { ZoomInIcon, ZoomOutIcon } from 'lucide-react'
 import type { SetStateAction } from 'react'
-import {
-	DEFAULT_ZOOM,
-	MAX_ZOOM,
-	MIN_ZOOM,
-	ZOOM_STEP,
-} from '../../config/settings'
-import { Button } from './button'
+import { Button } from '@/components/ui/button'
+import { DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '@/config/settings'
 
 interface CanvasZoomProps {
 	zoom: number

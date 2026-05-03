@@ -8,15 +8,12 @@ import {
 	Eye as VisibleIcon,
 } from 'lucide-react'
 import { useState } from 'react'
-import {
-	LAYER_PREVIEW_PADDING,
-	LAYER_PREVIEW_SIZE,
-} from '../../config/settings'
-import { LayerContext } from '../../contexts/layer-context'
-import { useSafeContext } from '../../hooks'
-import type { Coordinates, Layer as LayerI } from '../../types'
-import { Button } from './button'
-import { LayerPreview } from './layer-preview'
+import { Button } from '@/components/ui/button'
+import { LayerPreview } from '@/components/ui/layer-preview'
+import { LAYER_PREVIEW_PADDING, LAYER_PREVIEW_SIZE } from '@/config/settings'
+import { LayerContext } from '@/contexts/layer-context'
+import { useSafeContext } from '@/hooks'
+import type { Coordinates, Layer as LayerI } from '@/types'
 
 interface LayerProps {
 	data: LayerI

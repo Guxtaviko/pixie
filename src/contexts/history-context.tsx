@@ -1,7 +1,7 @@
 import { createContext } from 'react'
-import { MAX_HISTORY_LENGTH } from '../config/settings'
-import { useLocalStorage } from '../hooks'
-import type { Layer } from '../types'
+import { MAX_HISTORY_LENGTH } from '@/config/settings'
+import { useLocalStorage } from '@/hooks'
+import type { Layer } from '@/types'
 
 type HistoryContextType = {
 	undo: () => Layer[] | null

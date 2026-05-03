@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { GridContext } from '../../contexts/grid-context'
-import { LayerContext } from '../../contexts/layer-context'
-import { useSafeContext } from '../../hooks'
-import { Button } from './button'
-import { Modal } from './modal'
+import { Button } from '@/components/ui/button'
+import { Modal } from '@/components/ui/modal'
+import { GridContext } from '@/contexts/grid-context'
+import { LayerContext } from '@/contexts/layer-context'
+import { useSafeContext } from '@/hooks'
 
 interface ExportModalProps {
 	onClose: () => void

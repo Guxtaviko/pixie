@@ -2,7 +2,7 @@ import {
 	DEFAULT_PIXEL_SIZE,
 	GRID_FIT_MULTIPLIER,
 	MIN_PIXEL_SIZE,
-} from '../config/settings'
+} from '@/config/settings'
 
 interface CalculatePixelSizeParams {
 	availableWidth: number

@@ -1,4 +1,4 @@
-import type { BrushShape, Layer, Tool } from '../types'
+import type { BrushShape, Layer, Tool } from '@/types'
 
 // Color settings
 const WHITE = '#ffffff'

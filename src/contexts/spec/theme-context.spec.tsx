@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { type PropsWithChildren, useContext } from 'react'
 import { describe, expect, it } from 'vitest'
-import { ThemeContext, ThemeProvider } from '../theme-context'
+import { ThemeContext, ThemeProvider } from '@/contexts/theme-context'
 
 const wrapper = ({ children }: PropsWithChildren) => (
 	<ThemeProvider>{children}</ThemeProvider>

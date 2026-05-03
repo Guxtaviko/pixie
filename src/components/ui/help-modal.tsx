@@ -4,8 +4,8 @@ import {
 	Grid2x2 as GridIcon,
 	Layers as LayersIcon,
 } from 'lucide-react'
-import { Button } from './button'
-import { Modal } from './modal'
+import { Button } from '@/components/ui/button'
+import { Modal } from '@/components/ui/modal'
 
 interface HelpModalProps {
 	onClose: () => void

@@ -6,11 +6,11 @@ import {
 	LAYER_PREVIEW_SIZE,
 	LIGHT_CHECKER,
 	PIXEL_PERFECT_PREVIEW,
-} from '../../config/settings'
-import { GridContext } from '../../contexts/grid-context'
-import { ThemeContext } from '../../contexts/theme-context'
-import { useSafeContext } from '../../hooks'
-import type { Coordinates, Layer } from '../../types'
+} from '@/config/settings'
+import { GridContext } from '@/contexts/grid-context'
+import { ThemeContext } from '@/contexts/theme-context'
+import { useSafeContext } from '@/hooks'
+import type { Coordinates, Layer } from '@/types'
 
 interface LayerPreviewProps {
 	data: Layer['data']

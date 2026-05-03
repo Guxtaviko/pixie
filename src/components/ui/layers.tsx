@@ -17,10 +17,10 @@ import {
 	verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { Layers as LayersIcon, Plus as PlusIcon } from 'lucide-react'
-import { LayerContext } from '../../contexts/layer-context'
-import { useSafeContext } from '../../hooks'
-import { Button } from './button'
-import { Layer } from './layer'
+import { Button } from '@/components/ui/button'
+import { Layer } from '@/components/ui/layer'
+import { LayerContext } from '@/contexts/layer-context'
+import { useSafeContext } from '@/hooks'
 
 export const Layers = () => {
 	const { layers, addLayer, setLayers } = useSafeContext(LayerContext)

@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Canvas } from './components/canvas'
-import { Header } from './components/header'
-import { Sidebar } from './components/sidebar'
-import { SidebarWrapper } from './components/sidebar-wrapper'
-import { ToolBar } from './components/tool-bar'
-import { ToolOptionsBar } from './components/tool-options-bar'
-import { useMobile } from './hooks/use-mobile'
+import { Canvas } from '@/components/canvas'
+import { Header } from '@/components/header'
+import { Sidebar } from '@/components/sidebar'
+import { SidebarWrapper } from '@/components/sidebar-wrapper'
+import { ToolBar } from '@/components/tool-bar'
+import { ToolOptionsBar } from '@/components/tool-options-bar'
+import { useMobile } from '@/hooks/use-mobile'
 
 export const App = () => {
 	const isMobile = useMobile()

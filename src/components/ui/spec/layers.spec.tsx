@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { PixieTestProviders } from '../../../spec/test-providers'
-import { Layers } from '../layers'
+import { Layers } from '@/components/ui/layers'
+import { PixieTestProviders } from '@/spec/test-providers'
 
 describe('Layers', () => {
 	it('adds a new layer from add button', () => {

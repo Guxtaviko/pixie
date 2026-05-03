@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { useLocalStorage } from '../use-local-storage'
+import { useLocalStorage } from '@/hooks/use-local-storage'
 
 describe('useLocalStorage', () => {
 	it('returns initial value when key does not exist', () => {

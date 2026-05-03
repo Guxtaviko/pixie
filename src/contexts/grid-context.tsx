@@ -5,8 +5,8 @@ import {
 	DEFAULT_PIXEL_SIZE_MODE,
 	DEFAULT_SHOW_GRID,
 	type PixelSizeMode,
-} from '../config/settings'
-import { useLocalStorage } from '../hooks'
+} from '@/config/settings'
+import { useLocalStorage } from '@/hooks'
 
 type GridContextType = {
 	width: number

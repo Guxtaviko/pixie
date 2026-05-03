@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { colorBrightness } from '../color-brightness'
+import { colorBrightness } from '@/utils/color-brightness'
 
 describe('color-brightness', () => {
 	it('classifies bright colors as light', () => {

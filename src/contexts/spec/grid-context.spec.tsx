@@ -6,8 +6,8 @@ import {
 	DEFAULT_PIXEL_SIZE,
 	DEFAULT_PIXEL_SIZE_MODE,
 	DEFAULT_SHOW_GRID,
-} from '../../config/settings'
-import { GridContext, GridProvider } from '../grid-context'
+} from '@/config/settings'
+import { GridContext, GridProvider } from '@/contexts/grid-context'
 
 const wrapper = ({ children }: PropsWithChildren) => (
 	<GridProvider>{children}</GridProvider>

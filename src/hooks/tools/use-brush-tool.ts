@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
-import type { BrushShape, Coordinates, Layer } from '../../types'
-import { getBrushFootprint } from '../../utils/brush'
+import type { BrushShape, Coordinates, Layer } from '@/types'
+import { getBrushFootprint } from '@/utils/brush'
 
 type UseBrushToolProps = {
 	layer?: Layer

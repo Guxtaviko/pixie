@@ -1,9 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { DEFAULT_BRUSH_SHAPE, DEFAULT_BRUSH_SIZE } from '../../config/settings'
-import { ToolContext } from '../../contexts/tool-context'
-import type { BrushShape, Tool } from '../../types'
-import { ToolOptionsBar } from '../tool-options-bar'
+import { ToolOptionsBar } from '@/components/tool-options-bar'
+import { DEFAULT_BRUSH_SHAPE, DEFAULT_BRUSH_SIZE } from '@/config/settings'
+import { ToolContext } from '@/contexts/tool-context'
+import type { BrushShape, Tool } from '@/types'
 
 describe('ToolOptionsBar', () => {
 	const defaultProps = {

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { PixieTestProviders } from '../../spec/test-providers'
-import { Header } from '../header'
+import { Header } from '@/components/header'
+import { PixieTestProviders } from '@/spec/test-providers'
 
 describe('Header', () => {
 	it('opens export modal when clicking Exportar', () => {

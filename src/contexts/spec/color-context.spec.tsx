@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { type PropsWithChildren, useContext } from 'react'
 import { describe, expect, it } from 'vitest'
-import { ColorContext, ColorProvider } from '../color-context'
+import { ColorContext, ColorProvider } from '@/contexts/color-context'
 
 const wrapper = ({ children }: PropsWithChildren) => (
 	<ColorProvider>{children}</ColorProvider>

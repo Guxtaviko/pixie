@@ -1,21 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { CanvasZoom } from '@/components/ui/canvas-zoom'
 import {
 	COORDS_DEBUG,
 	DARK_CHECKER,
 	DEFAULT_ZOOM,
 	LIGHT_CHECKER,
-} from '../config/settings'
-import { GridContext } from '../contexts/grid-context'
-import { LayerContext } from '../contexts/layer-context'
-import { ThemeContext } from '../contexts/theme-context'
-import { ToolContext } from '../contexts/tool-context'
-import { useLocalStorage, useSafeContext } from '../hooks'
-import { UsePixie } from '../hooks/use-pixie'
-import type { Coordinates } from '../types'
-import { getBrushFootprint } from '../utils/brush'
-import { calculatePixelSize } from '../utils/calculate-pixel-size'
-import { colorBrightness } from '../utils/color-brightness'
-import { CanvasZoom } from './ui/canvas-zoom'
+} from '@/config/settings'
+import { GridContext } from '@/contexts/grid-context'
+import { LayerContext } from '@/contexts/layer-context'
+import { ThemeContext } from '@/contexts/theme-context'
+import { ToolContext } from '@/contexts/tool-context'
+import { useLocalStorage, useSafeContext } from '@/hooks'
+import { UsePixie } from '@/hooks/use-pixie'
+import type { Coordinates } from '@/types'
+import { getBrushFootprint } from '@/utils/brush'
+import { calculatePixelSize } from '@/utils/calculate-pixel-size'
+import { colorBrightness } from '@/utils/color-brightness'
 
 export const Canvas = () => {
 	const { width, height, showGrid, pixelSize, setAutoPixelSize } =

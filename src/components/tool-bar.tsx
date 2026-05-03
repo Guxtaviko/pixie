@@ -7,16 +7,16 @@ import {
 	Trash2 as TrashIcon,
 } from 'lucide-react'
 import { useState } from 'react'
-import { ColorContext } from '../contexts/color-context'
-import { GridContext } from '../contexts/grid-context'
-import { LayerContext } from '../contexts/layer-context'
-import { ToolContext } from '../contexts/tool-context'
-import { UseHotkey, useSafeContext } from '../hooks'
-import { useMobile } from '../hooks/use-mobile'
-import type { Tool } from '../types'
-import { Button } from './ui/button'
-import { ColorSelector } from './ui/color-selector'
-import { ToolButton } from './ui/tool-button'
+import { Button } from '@/components/ui/button'
+import { ColorSelector } from '@/components/ui/color-selector'
+import { ToolButton } from '@/components/ui/tool-button'
+import { ColorContext } from '@/contexts/color-context'
+import { GridContext } from '@/contexts/grid-context'
+import { LayerContext } from '@/contexts/layer-context'
+import { ToolContext } from '@/contexts/tool-context'
+import { UseHotkey, useSafeContext } from '@/hooks'
+import { useMobile } from '@/hooks/use-mobile'
+import type { Tool } from '@/types'
 
 const version = APP_VERSION
 

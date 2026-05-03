@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { hexToHSB, hsbToHex } from '../color-converter'
+import { hexToHSB, hsbToHex } from '@/utils/color-converter'
 
 describe('color-converter', () => {
 	it('converts hex to HSB for primary colors', () => {

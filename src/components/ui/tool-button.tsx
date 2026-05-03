@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { Button } from './button'
+import { Button } from '@/components/ui/button'
 
 interface ToolButtonProps {
 	label: string

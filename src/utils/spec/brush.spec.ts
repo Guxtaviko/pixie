@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getBrushFootprint } from '../brush'
+import { getBrushFootprint } from '@/utils/brush'
 
 describe('getBrushFootprint', () => {
 	it('should return a single pixel for size 1', () => {

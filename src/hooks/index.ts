@@ -1,3 +1,3 @@
-export * from './use-hotkey'
-export * from './use-local-storage'
-export * from './use-safe-context'
+export * from '@/hooks/use-hotkey'
+export * from '@/hooks/use-local-storage'
+export * from '@/hooks/use-safe-context'

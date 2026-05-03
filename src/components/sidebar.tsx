@@ -6,12 +6,12 @@ import {
 	Zap as ZapIcon,
 } from 'lucide-react'
 import { useState } from 'react'
-import { ColorContext } from '../contexts/color-context'
-import { useSafeContext } from '../hooks'
-import { colorBrightness } from '../utils/color-brightness'
-import { Button } from './ui/button'
-import { ColorSelector } from './ui/color-selector'
-import { Layers } from './ui/layers'
+import { Button } from '@/components/ui/button'
+import { ColorSelector } from '@/components/ui/color-selector'
+import { Layers } from '@/components/ui/layers'
+import { ColorContext } from '@/contexts/color-context'
+import { useSafeContext } from '@/hooks'
+import { colorBrightness } from '@/utils/color-brightness'
 
 interface SidebarProps {
 	className?: string

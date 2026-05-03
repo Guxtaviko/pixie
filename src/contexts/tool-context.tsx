@@ -3,9 +3,9 @@ import {
 	DEFAULT_BRUSH_SHAPE,
 	DEFAULT_BRUSH_SIZE,
 	DEFAULT_TOOL,
-} from '../config/settings'
-import { useLocalStorage } from '../hooks'
-import type { BrushShape, Tool } from '../types'
+} from '@/config/settings'
+import { useLocalStorage } from '@/hooks'
+import type { BrushShape, Tool } from '@/types'
 
 type ToolContextType = {
 	tool: Tool

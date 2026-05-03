@@ -9,17 +9,17 @@ import {
 	Undo2 as UndoIcon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import Logo from '../assets/logo.png'
-import { ThemeContext } from '../contexts'
-import { GridContext } from '../contexts/grid-context'
-import { HistoryContext } from '../contexts/history-context'
-import { LayerContext } from '../contexts/layer-context'
-import { UseHotkey, useSafeContext } from '../hooks'
-import type { Layer } from '../types'
-import { Button } from './ui/button'
-import { ExportModal } from './ui/export-modal'
-import { GridModal } from './ui/grid-modal'
-import { HelpModal } from './ui/help-modal'
+import Logo from '@/assets/logo.png'
+import { Button } from '@/components/ui/button'
+import { ExportModal } from '@/components/ui/export-modal'
+import { GridModal } from '@/components/ui/grid-modal'
+import { HelpModal } from '@/components/ui/help-modal'
+import { ThemeContext } from '@/contexts'
+import { GridContext } from '@/contexts/grid-context'
+import { HistoryContext } from '@/contexts/history-context'
+import { LayerContext } from '@/contexts/layer-context'
+import { UseHotkey, useSafeContext } from '@/hooks'
+import type { Layer } from '@/types'
 
 interface HeaderProps {
 	onToggleSidebar: () => void

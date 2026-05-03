@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import type { Layer } from '../../types'
+import type { Layer } from '@/types'
 
 type UsePickerToolProps = {
 	layers: Layer[]

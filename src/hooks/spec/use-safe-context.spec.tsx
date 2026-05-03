@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react'
 import { createContext, type PropsWithChildren } from 'react'
 import { describe, expect, it } from 'vitest'
-import { useSafeContext } from '../use-safe-context'
+import { useSafeContext } from '@/hooks/use-safe-context'
 
 const NumberContext = createContext<number | null>(null)
 NumberContext.displayName = 'NumberContext'

@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { UseHotkey } from '../use-hotkey'
+import { UseHotkey } from '@/hooks/use-hotkey'
 
 interface HotkeyHarnessProps {
 	keybind: string
