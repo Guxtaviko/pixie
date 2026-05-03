@@ -1,11 +1,13 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { ColorContext } from '../contexts/color-context'
 import { GridContext } from '../contexts/grid-context'
 import { HistoryContext } from '../contexts/history-context'
 import { LayerContext } from '../contexts/layer-context'
 import { ToolContext } from '../contexts/tool-context'
 import type { Coordinates } from '../types'
-import { getBrushFootprint } from '../utils/brush'
+import { useBrushTool } from './tools/use-brush-tool'
+import { useFillTool } from './tools/use-fill-tool'
+import { usePickerTool } from './tools/use-picker-tool'
 import { useSafeContext } from './use-safe-context'
 
 export function UsePixie() {
@@ -30,155 +32,36 @@ export function UsePixie() {
 		[width, height],
 	)
 
-	const brushFootprint = useMemo(
-		() => getBrushFootprint(brushSize, brushShape),
-		[brushSize, brushShape],
-	)
+	const { drawPixel, drawPixels } = useBrushTool({
+		layer,
+		isLayerDrawable: isLayerDrawable || false,
+		width,
+		height,
+		primary,
+		brushSize,
+		brushShape,
+		getLayerData,
+		updateLayer,
+		validateCoordinates,
+	})
 
-	const drawPixel = useCallback(
-		(x: number, y: number, color = primary) => {
-			if (!validateCoordinates(x, y)) return
-			if (!isLayerDrawable) return
+	const { floodFill } = useFillTool({
+		layer,
+		layers,
+		isLayerDrawable: isLayerDrawable || false,
+		primary,
+		getLayerData,
+		updateLayer,
+		saveToHistory,
+		validateCoordinates,
+	})
 
-			const newData = getLayerData()
-			let hasChanges = false
-
-			for (const offset of brushFootprint) {
-				const nx = x + offset.x
-				const ny = y + offset.y
-
-				if (!validateCoordinates(nx, ny)) continue
-				if (!newData[ny]) newData[ny] = []
-				if (newData[ny][nx] === color) continue
-
-				newData[ny][nx] = color
-				hasChanges = true
-			}
-
-			if (hasChanges) updateLayer(layer.id, { data: newData })
-		},
-		[
-			layer,
-			primary,
-			updateLayer,
-			getLayerData,
-			validateCoordinates,
-			isLayerDrawable,
-			brushFootprint,
-		],
-	)
-
-	const drawPixels = useCallback(
-		(coords: Coordinates[], color = primary) => {
-			if (!isLayerDrawable) return
-
-			const newData = getLayerData()
-			let hasChanges = false
-
-			coords.forEach(({ x, y }) => {
-				for (const offset of brushFootprint) {
-					const nx = x + offset.x
-					const ny = y + offset.y
-
-					if (!validateCoordinates(nx, ny)) continue
-					if (!newData[ny]) newData[ny] = []
-					if (newData[ny][nx] === color) continue
-
-					newData[ny][nx] = color
-					hasChanges = true
-				}
-			})
-
-			if (hasChanges) updateLayer(layer.id, { data: newData })
-		},
-		[
-			layer,
-			primary,
-			updateLayer,
-			getLayerData,
-			validateCoordinates,
-			isLayerDrawable,
-			brushFootprint,
-		],
-	)
-
-	const floodFill = useCallback(
-		(x: number, y: number) => {
-			if (!validateCoordinates(x, y)) return
-			if (!isLayerDrawable) return
-
-			const layerData = getLayerData()
-			const target = layerData[y]?.[x] || 'transparent'
-			if (target === primary) return
-
-			const stack: number[][] = [[x, y]]
-			const visited = new Set<string>()
-
-			while (stack.length) {
-				const [currX, currY] = stack.pop() || []
-				if (currX === undefined || currY === undefined) continue
-
-				const key = `${currX},${currY}`
-				const keyColor = layerData[currY]?.[currX] || 'transparent'
-
-				if (
-					!validateCoordinates(currX, currY) ||
-					visited.has(key) ||
-					keyColor !== target
-				) {
-					continue
-				}
-
-				if (!layerData[currY]) layerData[currY] = []
-				layerData[currY][currX] = primary
-
-				visited.add(key)
-
-				stack.push(
-					[currX + 1, currY],
-					[currX - 1, currY],
-					[currX, currY + 1],
-					[currX, currY - 1],
-				)
-			}
-
-			const newLayers = layers.map((l) =>
-				l.id === layer.id ? { ...l, data: layerData } : l,
-			)
-			updateLayer(layer.id, { data: layerData })
-			saveToHistory(newLayers)
-		},
-		[
-			layers,
-			layer,
-			isLayerDrawable,
-			primary,
-			saveToHistory,
-			validateCoordinates,
-			getLayerData,
-			updateLayer,
-		],
-	)
-
-	const pickColor = useCallback(
-		(x: number, y: number) => {
-			if (!validateCoordinates(x, y)) return null
-
-			for (let i = 0; i < layers.length; i++) {
-				const layer = layers[i]
-				if (!layer.isVisible) continue
-
-				const color = layer.data[y]?.[x]
-				if (color && color !== 'transparent') {
-					setColor(color)
-					addToPalette(color)
-				}
-			}
-
-			return null
-		},
-		[layers, validateCoordinates, setColor, addToPalette],
-	)
+	const { pickColor } = usePickerTool({
+		layers,
+		setColor,
+		addToPalette,
+		validateCoordinates,
+	})
 
 	const handleInteraction = useCallback(
 		({ x, y }: Coordinates) => {
