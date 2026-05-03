@@ -1,4 +1,4 @@
-import { Circle, Square } from 'lucide-react'
+import { Circle as CircleIcon, Square as SquareIcon } from 'lucide-react'
 import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from '../config/settings'
 import { ToolContext } from '../contexts/tool-context'
 import { useSafeContext } from '../hooks'
@@ -11,8 +11,8 @@ export const ToolOptionsBar = () => {
 	if (tool !== 'brush' && tool !== 'eraser') return null
 
 	return (
-		<div className='w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-2 flex flex-wrap items-center gap-3 shrink-0 z-10'>
-			<span className='text-xs font-medium text-slate-500 w-12 text-right'>
+		<div className='w-full bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-2 flex flex-wrap items-center gap-3 shrink-0 z-10'>
+			<span className='text-xs font-medium text-slate-500 text-right'>
 				{brushSize}px
 			</span>
 			<input
@@ -22,7 +22,7 @@ export const ToolOptionsBar = () => {
 				value={brushSize}
 				onChange={(e) => setBrushSize(parseInt(e.target.value, 10))}
 				onPointerUp={(e) => e.currentTarget.blur()}
-				className='w-24 md:w-32 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-slate-900 dark:accent-slate-100'
+				className='w-24 md:w-32 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-slate-800 dark:accent-slate-200'
 			/>
 			<div className='h-4 w-px bg-slate-200 dark:bg-slate-800 mx-1' />
 			<div className='flex gap-1'>
@@ -36,7 +36,7 @@ export const ToolOptionsBar = () => {
 					}`}
 					title='Circle brush'
 				>
-					<Circle
+					<CircleIcon
 						size={14}
 						className={brushShape === 'circle' ? 'fill-current' : ''}
 					/>
@@ -51,7 +51,7 @@ export const ToolOptionsBar = () => {
 					}`}
 					title='Square brush'
 				>
-					<Square
+					<SquareIcon
 						size={14}
 						className={brushShape === 'square' ? 'fill-current' : ''}
 					/>

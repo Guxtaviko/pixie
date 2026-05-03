@@ -223,29 +223,29 @@ export const Canvas = () => {
 			for (const offset of footprint) {
 				const nx = hoverCoord.x + offset.x
 				const ny = hoverCoord.y + offset.y
-				if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-					// Find the topmost visible pixel color to determine border contrast
-					let topColor = 'transparent'
-					for (let i = layers.length - 1; i >= 0; i--) {
-						if (layers[i].isVisible && layers[i].data[ny]?.[nx]) {
-							topColor = layers[i].data[ny][nx]
-							break
-						}
+
+				const isOutOfBounds = nx < 0 || nx >= width || ny < 0 || ny >= height
+				if (isOutOfBounds) continue
+
+				// Find the topmost visible pixel color to determine border contrast
+				let topColor = 'transparent'
+				for (let i = layers.length - 1; i >= 0; i--) {
+					if (layers[i].isVisible && layers[i].data[ny]?.[nx]) {
+						topColor = layers[i].data[ny][nx]
+						break
 					}
-
-					// If transparent, check the checkerboard color
-					if (topColor === 'transparent') {
-						topColor = checkerColors[(nx + ny) % 2]
-					}
-
-					// Contrast border (white over dark pixels, black over light pixels)
-					const isLight = colorBrightness(topColor) === 'light'
-					ctx.strokeStyle = isLight
-						? 'rgba(0, 0, 0, 0.7)'
-						: 'rgba(255, 255, 255, 0.7)'
-
-					ctx.strokeRect(nx * pixelSize, ny * pixelSize, pixelSize, pixelSize)
 				}
+
+				// If transparent, check the checkerboard color
+				if (topColor === 'transparent') topColor = checkerColors[(nx + ny) % 2]
+
+				// Contrast border (white over dark pixels, black over light pixels)
+				const isLight = colorBrightness(topColor) === 'light'
+				ctx.strokeStyle = isLight
+					? 'rgba(0, 0, 0, 0.7)'
+					: 'rgba(255, 255, 255, 0.7)'
+
+				ctx.strokeRect(nx * pixelSize, ny * pixelSize, pixelSize, pixelSize)
 			}
 		}
 
