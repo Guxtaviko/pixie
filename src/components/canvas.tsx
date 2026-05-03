@@ -5,7 +5,6 @@ import {
 	DEFAULT_ZOOM,
 	LIGHT_CHECKER,
 } from '../config/settings'
-import { ColorContext } from '../contexts/color-context'
 import { GridContext } from '../contexts/grid-context'
 import { LayerContext } from '../contexts/layer-context'
 import { ThemeContext } from '../contexts/theme-context'
@@ -15,6 +14,7 @@ import { UsePixie } from '../hooks/use-pixie'
 import type { Coordinates } from '../types'
 import { getBrushFootprint } from '../utils/brush'
 import { calculatePixelSize } from '../utils/calculate-pixel-size'
+import { colorBrightness } from '../utils/color-brightness'
 import { CanvasZoom } from './ui/canvas-zoom'
 
 export const Canvas = () => {
@@ -23,7 +23,6 @@ export const Canvas = () => {
 	const { theme } = useSafeContext(ThemeContext)
 	const { layers } = useSafeContext(LayerContext)
 	const { tool, brushSize, brushShape } = useSafeContext(ToolContext)
-	const { primary } = useSafeContext(ColorContext)
 	const [zoom, setZoom] = useLocalStorage<number>('canvas-zoom', DEFAULT_ZOOM)
 	const [isDrawing, setIsDrawing] = useState<boolean>(false)
 	const [coordsBuffer, setCoordsBuffer] = useState<Coordinates[]>([])
@@ -219,27 +218,35 @@ export const Canvas = () => {
 		// Footprint preview
 		if (hoverCoord && (tool === 'brush' || tool === 'eraser')) {
 			const footprint = getBrushFootprint(brushSize, brushShape)
-			const isEraser = tool === 'eraser'
-			ctx.fillStyle = isEraser ? 'rgba(255, 255, 255, 0.4)' : primary
-			ctx.strokeStyle = isEraser
-				? 'rgba(255, 255, 255, 0.8)'
-				: theme === 'dark'
-					? 'rgba(255, 255, 255, 0.5)'
-					: 'rgba(0, 0, 0, 0.5)'
 			ctx.lineWidth = 1
-			if (!isEraser) {
-				ctx.globalAlpha = 0.5
-			}
 
 			for (const offset of footprint) {
 				const nx = hoverCoord.x + offset.x
 				const ny = hoverCoord.y + offset.y
 				if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-					ctx.fillRect(nx * pixelSize, ny * pixelSize, pixelSize, pixelSize)
+					// Find the topmost visible pixel color to determine border contrast
+					let topColor = 'transparent'
+					for (let i = layers.length - 1; i >= 0; i--) {
+						if (layers[i].isVisible && layers[i].data[ny]?.[nx]) {
+							topColor = layers[i].data[ny][nx]
+							break
+						}
+					}
+
+					// If transparent, check the checkerboard color
+					if (topColor === 'transparent') {
+						topColor = checkerColors[(nx + ny) % 2]
+					}
+
+					// Contrast border (white over dark pixels, black over light pixels)
+					const isLight = colorBrightness(topColor) === 'light'
+					ctx.strokeStyle = isLight
+						? 'rgba(0, 0, 0, 0.7)'
+						: 'rgba(255, 255, 255, 0.7)'
+
 					ctx.strokeRect(nx * pixelSize, ny * pixelSize, pixelSize, pixelSize)
 				}
 			}
-			ctx.globalAlpha = 1.0 // reset
 		}
 
 		// Writes coordinates for debugging
@@ -269,7 +276,6 @@ export const Canvas = () => {
 		tool,
 		brushSize,
 		brushShape,
-		primary,
 	])
 
 	useEffect(() => {
