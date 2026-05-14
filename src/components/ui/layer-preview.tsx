@@ -56,7 +56,7 @@ export const LayerPreview = ({ data, pos }: LayerPreviewProps) => {
 					? checkerColors[(x + y) % 2]
 					: checkerColors[0]
 
-				if (!color) ctx.fillStyle = bgColor
+				if (!color || color === 'transparent') ctx.fillStyle = bgColor
 				else ctx.fillStyle = color
 
 				ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize)
