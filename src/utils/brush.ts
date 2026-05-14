@@ -18,17 +18,16 @@ export function getBrushFootprint(
 		for (let x = -radius; x <= radius; x++) {
 			if (isEven && (x === radius || y === radius)) continue
 
-			if (shape === 'circle') {
-				const centerX = x + offset
-				const centerY = y + offset
-				const distance = Math.sqrt(centerX * centerX + centerY * centerY)
-
-				if (distance <= size / 2) {
-					footprint.push({ x, y })
-				}
-			} else {
+			if (shape === 'square') {
 				footprint.push({ x, y })
+				continue
 			}
+
+			const centerX = x + offset
+			const centerY = y + offset
+			const distance = Math.sqrt(centerX * centerX + centerY * centerY)
+
+			if (distance <= size / 2) footprint.push({ x, y })
 		}
 	}
 
