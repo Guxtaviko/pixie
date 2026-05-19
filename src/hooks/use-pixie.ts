@@ -7,12 +7,22 @@ import { ToolContext } from '@/contexts/tool-context'
 import { useBrushTool } from '@/hooks/tools/use-brush-tool'
 import { useFillTool } from '@/hooks/tools/use-fill-tool'
 import { usePickerTool } from '@/hooks/tools/use-picker-tool'
+import { useShapeTool } from '@/hooks/tools/use-shape-tool'
 import { useSafeContext } from '@/hooks/use-safe-context'
 import type { Coordinates } from '@/types'
+import { getToolBehavior, isShapeTool } from '@/utils/tools'
 
 export function UsePixie() {
-	const { tool, brushSize, brushShape } = useSafeContext(ToolContext)
-	const { primary, setColor, addToPalette } = useSafeContext(ColorContext)
+	const {
+		tool,
+		brushSize,
+		brushShape,
+		shapeMode,
+		shapeType,
+		useSecondaryFill,
+	} = useSafeContext(ToolContext)
+	const { primary, secondary, setColor, addToPalette } =
+		useSafeContext(ColorContext)
 	const { width, height } = useSafeContext(GridContext)
 	const { layers, currentLayerId, updateLayer } = useSafeContext(LayerContext)
 	const { saveToHistory } = useSafeContext(HistoryContext)
@@ -63,6 +73,31 @@ export function UsePixie() {
 		validateCoordinates,
 	})
 
+	const { drawShape, getShapePreviewPixels } = useShapeTool({
+		layer,
+		layers,
+		isLayerDrawable: isLayerDrawable || false,
+		primary,
+		secondary,
+		useSecondaryFill,
+		shapeMode,
+		getLayerData,
+		updateLayer,
+		saveToHistory,
+		validateCoordinates,
+	})
+
+	const getShapePreview = useCallback(
+		(start: Coordinates, end: Coordinates, shiftKey: boolean) => {
+			if (!isShapeTool(tool)) return { border: [], fill: [] }
+
+			const shape = tool === 'line' ? 'line' : shapeType
+
+			return getShapePreviewPixels(shape, start, end, shiftKey)
+		},
+		[tool, shapeType, getShapePreviewPixels],
+	)
+
 	const handleInteraction = useCallback(
 		({ x, y }: Coordinates) => {
 			switch (tool) {
@@ -101,14 +136,29 @@ export function UsePixie() {
 		[tool, drawPixels],
 	)
 
-	const endDrawing = useCallback(() => {
-		if (!['brush', 'eraser'].includes(tool)) return
+	const endDrawing = useCallback(
+		(start?: Coordinates, end?: Coordinates, shiftKey = false) => {
+			if (isShapeTool(tool) && start && end) {
+				const shape = tool === 'line' ? 'line' : shapeType
+				drawShape(shape, start, end, shiftKey)
+				return
+			}
 
-		const newLayers = layers.map((l) =>
-			l.id === layer?.id ? { ...l, data: getLayerData() } : l,
-		)
-		saveToHistory(newLayers)
-	}, [layers, layer, getLayerData, saveToHistory, tool])
+			const behavior = getToolBehavior(tool)
+			if (behavior === 'click') return
 
-	return { handleInteraction, handleInterpolatedInteraction, endDrawing }
+			const newLayers = layers.map((l) =>
+				l.id === layer?.id ? { ...l, data: getLayerData() } : l,
+			)
+			saveToHistory(newLayers)
+		},
+		[layers, layer, getLayerData, saveToHistory, tool, drawShape, shapeType],
+	)
+
+	return {
+		handleInteraction,
+		handleInterpolatedInteraction,
+		endDrawing,
+		getShapePreview,
+	}
 }

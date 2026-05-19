@@ -4,14 +4,12 @@ import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from '@/config/settings'
 import { ToolContext } from '@/contexts/tool-context'
 import { useSafeContext } from '@/hooks'
 
-export const ToolOptionsBar = () => {
-	const { tool, brushSize, setBrushSize, brushShape, setBrushShape } =
+const BrushOptions = () => {
+	const { brushSize, setBrushSize, brushShape, setBrushShape } =
 		useSafeContext(ToolContext)
 
-	if (tool !== 'brush' && tool !== 'eraser') return null
-
 	return (
-		<div className='w-full bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-2 flex flex-wrap items-center gap-3 shrink-0 z-10'>
+		<>
 			<span className='text-xs font-medium text-slate-500 text-right'>
 				{brushSize}px
 			</span>
@@ -57,6 +55,98 @@ export const ToolOptionsBar = () => {
 					/>
 				</Button>
 			</div>
+		</>
+	)
+}
+
+const ShapeOptions = () => {
+	const {
+		shapeType,
+		setShapeType,
+		shapeMode,
+		setShapeMode,
+		useSecondaryFill,
+		setUseSecondaryFill,
+	} = useSafeContext(ToolContext)
+
+	return (
+		<>
+			<div className='flex gap-1 items-center'>
+				<span className='text-xs font-medium text-slate-500 mr-1'>Forma:</span>
+				<Button
+					onClick={() => setShapeType('rectangle')}
+					onPointerUp={(e) => e.currentTarget.blur()}
+					className={`p-1.5 rounded-md transition-colors ${
+						shapeType === 'rectangle'
+							? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
+							: 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+					}`}
+					title='Retângulo'
+				>
+					<SquareIcon size={14} />
+				</Button>
+				<Button
+					onClick={() => setShapeType('circle')}
+					onPointerUp={(e) => e.currentTarget.blur()}
+					className={`p-1.5 rounded-md transition-colors ${
+						shapeType === 'circle'
+							? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
+							: 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+					}`}
+					title='Círculo'
+				>
+					<CircleIcon size={14} />
+				</Button>
+			</div>
+
+			<div className='h-4 w-px bg-slate-200 dark:bg-slate-800 mx-1' />
+
+			<div className='flex gap-1 items-center'>
+				<span className='text-xs font-medium text-slate-500 mr-2'>
+					Preenchimento:
+				</span>
+				<Button
+					onClick={() =>
+						setShapeMode(shapeMode === 'outline' ? 'filled' : 'outline')
+					}
+					onPointerUp={(e) => e.currentTarget.blur()}
+					className={`px-2 py-1 text-xs font-bold rounded-md uppercase transition-colors ${
+						shapeMode === 'filled'
+							? 'text-cyan-500 bg-slate-200 dark:bg-slate-800'
+							: 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 bg-slate-200/50 dark:bg-slate-800/50'
+					}`}
+				>
+					{shapeMode === 'filled' ? 'Fill' : 'Outl'}
+				</Button>
+
+				{shapeMode === 'filled' && (
+					<label className='flex items-center gap-1.5 ml-2 cursor-pointer'>
+						<input
+							type='checkbox'
+							checked={useSecondaryFill}
+							onChange={(e) => setUseSecondaryFill(e.target.checked)}
+							className='rounded border-slate-300 text-cyan-500 focus:ring-cyan-500'
+						/>
+						<span className='text-xs text-slate-500'>Usar cor secundária</span>
+					</label>
+				)}
+			</div>
+		</>
+	)
+}
+
+export const ToolOptionsBar = () => {
+	const { tool } = useSafeContext(ToolContext)
+
+	const showBrushOptions = tool === 'brush' || tool === 'eraser'
+	const showShapeOptions = tool === 'shape'
+
+	if (!showBrushOptions && !showShapeOptions) return null
+
+	return (
+		<div className='w-full bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-2 flex flex-wrap items-center gap-3 shrink-0'>
+			{showBrushOptions && <BrushOptions />}
+			{showShapeOptions && <ShapeOptions />}
 		</div>
 	)
 }

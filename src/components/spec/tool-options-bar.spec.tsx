@@ -13,6 +13,12 @@ describe('ToolOptionsBar', () => {
 		setBrushSize: vi.fn(),
 		brushShape: DEFAULT_BRUSH_SHAPE as BrushShape,
 		setBrushShape: vi.fn(),
+		shapeMode: 'outline' as const,
+		setShapeMode: vi.fn(),
+		shapeType: 'rectangle' as const,
+		setShapeType: vi.fn(),
+		useSecondaryFill: false,
+		setUseSecondaryFill: vi.fn(),
 	}
 
 	it('should render when tool is brush', () => {

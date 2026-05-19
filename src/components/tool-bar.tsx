@@ -1,9 +1,12 @@
 import {
 	Brush as BrushIcon,
+	Circle as CircleIcon,
 	Eraser as EraserIcon,
 	Grid3x3 as GridIcon,
+	Minus as MinusIcon,
 	PaintBucket as PaintIcon,
 	Pipette as PickerIcon,
+	Square as SquareIcon,
 	Trash2 as TrashIcon,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -20,13 +23,6 @@ import type { Tool } from '@/types'
 
 const version = APP_VERSION
 
-const buttons = [
-	{ label: 'Pincel', icon: BrushIcon, hotKey: 'b', tool: 'brush' },
-	{ label: 'Borracha', icon: EraserIcon, hotKey: 'e', tool: 'eraser' },
-	{ label: 'Balde', icon: PaintIcon, hotKey: 'g', tool: 'fill' },
-	{ label: 'Conta-gotas', icon: PickerIcon, hotKey: 'i', tool: 'picker' },
-]
-
 export const ToolBar = () => {
 	const isMobile = useMobile()
 	const [isColorSelectorOpen, setIsColorSelectorOpen] = useState(false)
@@ -34,16 +30,29 @@ export const ToolBar = () => {
 	const { showGrid, toggleGrid } = useSafeContext(GridContext)
 	const { primary, secondary, toggleActiveColor, setColor } =
 		useSafeContext(ColorContext)
-	const { tool, setTool } = useSafeContext(ToolContext)
+	const { tool, setTool, shapeType } = useSafeContext(ToolContext)
 	const { clearLayers } = useSafeContext(LayerContext)
 
 	UseHotkey('g', () => setTool('fill'))
 	UseHotkey('b', () => setTool('brush'))
 	UseHotkey('e', () => setTool('eraser'))
 	UseHotkey('i', () => setTool('picker'))
+	UseHotkey('l', () => setTool('line'))
+	UseHotkey('u', () => setTool('shape'))
 
 	const toggleColorSelector = () => setIsColorSelectorOpen(!isColorSelectorOpen)
 	const closeColorSelector = () => setIsColorSelectorOpen(false)
+
+	const ShapeIcon = shapeType === 'rectangle' ? SquareIcon : CircleIcon
+
+	const buttons = [
+		{ label: 'Pincel', icon: BrushIcon, hotKey: 'b', tool: 'brush' },
+		{ label: 'Borracha', icon: EraserIcon, hotKey: 'e', tool: 'eraser' },
+		{ label: 'Balde', icon: PaintIcon, hotKey: 'g', tool: 'fill' },
+		{ label: 'Conta-gotas', icon: PickerIcon, hotKey: 'i', tool: 'picker' },
+		{ label: 'Linha', icon: MinusIcon, hotKey: 'l', tool: 'line' },
+		{ label: 'Forma', icon: ShapeIcon, hotKey: 'u', tool: 'shape' },
+	]
 
 	return (
 		<aside className='w-full md:w-20 border-b md:border-b-0 md:border-r section flex md:flex-col items-center py-3 md:py-4 px-3 md:px-0 gap-3 md:gap-4 z-10 overflow-x-auto md:overflow-x-visible'>

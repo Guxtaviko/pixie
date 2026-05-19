@@ -5,7 +5,7 @@ import {
 	DEFAULT_TOOL,
 } from '@/config/settings'
 import { useLocalStorage } from '@/hooks'
-import type { BrushShape, Tool } from '@/types'
+import type { BrushShape, ShapeMode, ShapeType, Tool } from '@/types'
 
 type ToolContextType = {
 	tool: Tool
@@ -14,6 +14,12 @@ type ToolContextType = {
 	setBrushSize: (size: number) => void
 	brushShape: BrushShape
 	setBrushShape: (shape: BrushShape) => void
+	shapeMode: ShapeMode
+	setShapeMode: (mode: ShapeMode) => void
+	shapeType: ShapeType
+	setShapeType: (shape: ShapeType) => void
+	useSecondaryFill: boolean
+	setUseSecondaryFill: (use: boolean) => void
 }
 
 const ToolContext = createContext<ToolContextType>({
@@ -23,6 +29,12 @@ const ToolContext = createContext<ToolContextType>({
 	setBrushSize: () => null,
 	brushShape: DEFAULT_BRUSH_SHAPE,
 	setBrushShape: () => null,
+	shapeMode: 'outline',
+	setShapeMode: () => null,
+	shapeType: 'rectangle',
+	setShapeType: () => null,
+	useSecondaryFill: false,
+	setUseSecondaryFill: () => null,
 })
 
 const ToolProvider = ({ children }: { children: React.ReactNode }) => {
@@ -35,6 +47,18 @@ const ToolProvider = ({ children }: { children: React.ReactNode }) => {
 		'brush-shape',
 		DEFAULT_BRUSH_SHAPE,
 	)
+	const [shapeMode, setShapeMode] = useLocalStorage<ShapeMode>(
+		'shape-mode',
+		'outline',
+	)
+	const [shapeType, setShapeType] = useLocalStorage<ShapeType>(
+		'shape-type',
+		'rectangle',
+	)
+	const [useSecondaryFill, setUseSecondaryFill] = useLocalStorage<boolean>(
+		'use-secondary-fill',
+		false,
+	)
 
 	return (
 		<ToolContext.Provider
@@ -45,6 +69,12 @@ const ToolProvider = ({ children }: { children: React.ReactNode }) => {
 				setBrushSize,
 				brushShape,
 				setBrushShape,
+				shapeMode,
+				setShapeMode,
+				shapeType,
+				setShapeType,
+				useSecondaryFill,
+				setUseSecondaryFill,
 			}}
 		>
 			{children}

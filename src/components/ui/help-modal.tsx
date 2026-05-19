@@ -3,6 +3,7 @@ import {
 	Download as ExportIcon,
 	Grid2x2 as GridIcon,
 	Layers as LayersIcon,
+	Square as SquareIcon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Modal } from '@/components/ui/modal'
@@ -33,6 +34,14 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
 						</span>
 						<span>
 							Desenhe pixels usando o <strong>Pincel</strong>
+						</span>
+					</li>
+					<li className='flex items-center gap-3'>
+						<span className='p-1.5 rounded-lg bg-slate-200 dark:bg-slate-700/75'>
+							<SquareIcon size={16} className='text-rose-400' />
+						</span>
+						<span>
+							Use <strong>Shift</strong> para criar formas perfeitas.
 						</span>
 					</li>
 					<li className='flex items-center gap-3'>
@@ -88,6 +97,18 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
 						<span>Conta-gotas</span>
 						<span className='text-slate-950 dark:text-slate-50 font-medium'>
 							I
+						</span>
+					</div>
+					<div className='flex justify-between py-2 px-3 bg-slate-200 dark:bg-slate-800 rounded-lg'>
+						<span>Linha</span>
+						<span className='text-slate-950 dark:text-slate-50 font-medium'>
+							L
+						</span>
+					</div>
+					<div className='flex justify-between py-2 px-3 bg-slate-200 dark:bg-slate-800 rounded-lg'>
+						<span>Forma</span>
+						<span className='text-slate-950 dark:text-slate-50 font-medium'>
+							U
 						</span>
 					</div>
 					<div className='flex justify-between py-2 px-3 bg-slate-200 dark:bg-slate-800 rounded-lg'>

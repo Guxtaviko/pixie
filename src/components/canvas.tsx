@@ -6,6 +6,7 @@ import {
 	DEFAULT_ZOOM,
 	LIGHT_CHECKER,
 } from '@/config/settings'
+import { ColorContext } from '@/contexts/color-context'
 import { GridContext } from '@/contexts/grid-context'
 import { LayerContext } from '@/contexts/layer-context'
 import { ThemeContext } from '@/contexts/theme-context'
@@ -16,24 +17,33 @@ import type { Coordinates } from '@/types'
 import { getBrushFootprint } from '@/utils/brush'
 import { calculatePixelSize } from '@/utils/calculate-pixel-size'
 import { colorBrightness } from '@/utils/color-brightness'
+import { isShapeTool } from '@/utils/tools'
 
 export const Canvas = () => {
 	const { width, height, showGrid, pixelSize, setAutoPixelSize } =
 		useSafeContext(GridContext)
 	const { theme } = useSafeContext(ThemeContext)
 	const { layers } = useSafeContext(LayerContext)
-	const { tool, brushSize, brushShape } = useSafeContext(ToolContext)
+	const { primary, secondary } = useSafeContext(ColorContext)
+	const { tool, brushSize, brushShape, useSecondaryFill } =
+		useSafeContext(ToolContext)
 	const [zoom, setZoom] = useLocalStorage<number>('canvas-zoom', DEFAULT_ZOOM)
 	const [isDrawing, setIsDrawing] = useState<boolean>(false)
 	const [coordsBuffer, setCoordsBuffer] = useState<Coordinates[]>([])
 	const [hoverCoord, setHoverCoord] = useState<Coordinates | null>(null)
+	const [startCoord, setStartCoord] = useState<Coordinates | null>(null)
+	const [isShiftPressed, setIsShiftPressed] = useState<boolean>(false)
 	const activePointerId = useRef<number | null>(null)
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [availableSize, setAvailableSize] = useState({ width: 0, height: 0 })
 
 	const canvasRef = useRef<HTMLCanvasElement>(null)
-	const { handleInteraction, handleInterpolatedInteraction, endDrawing } =
-		UsePixie()
+	const {
+		handleInteraction,
+		handleInterpolatedInteraction,
+		endDrawing,
+		getShapePreview,
+	} = UsePixie()
 
 	const canvasWidth = width * pixelSize
 	const canvasHeight = height * pixelSize
@@ -100,10 +110,16 @@ export const Canvas = () => {
 		e.currentTarget.setPointerCapture(e.pointerId)
 		activePointerId.current = e.pointerId
 
+		setIsShiftPressed(e.shiftKey)
 		setIsDrawing(true)
+
 		const coords = getCoordinates(e)
 		if (!coords) return
 		setHoverCoord(coords)
+		setStartCoord(coords)
+
+		if (isShapeTool(tool)) return
+
 		handleInteraction(coords)
 	}
 
@@ -119,8 +135,11 @@ export const Canvas = () => {
 		if (!isActivePointer) return
 
 		e.preventDefault()
+		setIsShiftPressed(e.shiftKey)
 
 		if (!coords) return
+		if (isShapeTool(tool)) return
+
 		setCoordsBuffer((prev) =>
 			prev.find((c) => c.x === coords.x && c.y === coords.y)
 				? prev
@@ -150,7 +169,12 @@ export const Canvas = () => {
 		if (!isDrawing) return
 
 		if (coordsBuffer.length) setCoordsBuffer([])
-		endDrawing()
+
+		const isValidShape = isShapeTool(tool) && startCoord && hoverCoord
+		if (isValidShape) endDrawing(startCoord, hoverCoord, isShiftPressed)
+		else endDrawing()
+
+		setStartCoord(null)
 	}
 
 	const handleLeave = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -215,6 +239,29 @@ export const Canvas = () => {
 			}
 		}
 
+		// Shape ghost preview
+		const isValidShape = isShapeTool(tool) && startCoord && hoverCoord
+		if (isValidShape) {
+			const pixels = getShapePreview(startCoord, hoverCoord, isShiftPressed)
+			ctx.globalAlpha = 0.85
+
+			const drawPreviewPixels = (pts: Coordinates[], color: string) => {
+				ctx.fillStyle = color
+				for (const p of pts) {
+					const isXOutOfBounds = p.x < 0 || p.x >= width
+					const isYOutOfBounds = p.y < 0 || p.y >= height
+					if (isXOutOfBounds || isYOutOfBounds) continue
+
+					ctx.fillRect(p.x * pixelSize, p.y * pixelSize, pixelSize, pixelSize)
+				}
+			}
+
+			drawPreviewPixels(pixels.border, primary)
+			drawPreviewPixels(pixels.fill, useSecondaryFill ? secondary : primary)
+
+			ctx.globalAlpha = 1
+		}
+
 		// Footprint preview
 		if (hoverCoord && (tool === 'brush' || tool === 'eraser')) {
 			const footprint = getBrushFootprint(brushSize, brushShape)
@@ -232,11 +279,10 @@ export const Canvas = () => {
 				for (let i = layers.length - 1; i >= 0; i--) {
 					if (layers[i].isVisible && layers[i].data[ny]?.[nx]) {
 						topColor = layers[i].data[ny][nx]
-						break
+						if (topColor !== 'transparent') break
 					}
 				}
 
-				// If transparent, check the checkerboard color
 				if (topColor === 'transparent') topColor = checkerColors[(nx + ny) % 2]
 
 				// Contrast border (white over dark pixels, black over light pixels)
@@ -276,6 +322,12 @@ export const Canvas = () => {
 		tool,
 		brushSize,
 		brushShape,
+		startCoord,
+		isShiftPressed,
+		primary,
+		secondary,
+		useSecondaryFill,
+		getShapePreview,
 	])
 
 	useEffect(() => {
