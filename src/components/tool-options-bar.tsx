@@ -1,5 +1,7 @@
 import { Circle as CircleIcon, Square as SquareIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Switch } from '@/components/ui/switch'
 import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from '@/config/settings'
 import { ToolContext } from '@/contexts/tool-context'
 import { useSafeContext } from '@/hooks'
@@ -101,31 +103,27 @@ const ShapeOptions = () => {
 
 			<div className='h-4 w-px bg-slate-200 dark:bg-slate-800 mx-1' />
 
-			<div className='flex gap-1 items-center'>
-				<span className='text-xs font-medium text-slate-500 mr-2'>
-					Preenchimento:
-				</span>
-				<Button
-					onClick={() =>
-						setShapeMode(shapeMode === 'outline' ? 'filled' : 'outline')
-					}
-					onPointerUp={(e) => e.currentTarget.blur()}
-					className={`px-2 py-1 text-xs font-bold rounded-md uppercase transition-colors ${
-						shapeMode === 'filled'
-							? 'text-cyan-500 bg-slate-200 dark:bg-slate-800'
-							: 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 bg-slate-200/50 dark:bg-slate-800/50'
-					}`}
-				>
-					{shapeMode === 'filled' ? 'Fill' : 'Outl'}
-				</Button>
+			<div className='flex gap-4 items-center'>
+				{/* biome-ignore lint/a11y/noLabelWithoutControl: custom switch control */}
+				<label className='flex items-center gap-2 cursor-pointer'>
+					<Switch
+						checked={shapeMode === 'filled'}
+						onCheckedChange={(checked) =>
+							setShapeMode(checked ? 'filled' : 'outline')
+						}
+						onPointerUp={(e) => e.currentTarget.blur()}
+					/>
+					<span className='text-xs font-medium text-slate-500'>
+						Preenchimento
+					</span>
+				</label>
 
 				{shapeMode === 'filled' && (
-					<label className='flex items-center gap-1.5 ml-2 cursor-pointer'>
-						<input
-							type='checkbox'
+					// biome-ignore lint/a11y/noLabelWithoutControl: custom checkbox control
+					<label className='flex items-center gap-1.5 cursor-pointer'>
+						<Checkbox
 							checked={useSecondaryFill}
-							onChange={(e) => setUseSecondaryFill(e.target.checked)}
-							className='rounded border-slate-300 text-cyan-500 focus:ring-cyan-500'
+							onCheckedChange={setUseSecondaryFill}
 						/>
 						<span className='text-xs text-slate-500'>Usar cor secundária</span>
 					</label>
