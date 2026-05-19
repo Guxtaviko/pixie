@@ -9,6 +9,14 @@ interface ExportModalProps {
 	onClose: () => void
 }
 
+const scalePresets = [2, 3, 5, 10]
+const fitPresets = [480, 720, 1080]
+
+const presets = [
+	...scalePresets.map((s) => ({ type: `scale`, value: s })),
+	...fitPresets.map((h) => ({ type: 'fit', value: h })),
+]
+
 export const ExportModal = ({ onClose }: ExportModalProps) => {
 	const [scale, setScale] = useState(1)
 	const { getMerged } = useSafeContext(LayerContext)
@@ -56,10 +64,34 @@ export const ExportModal = ({ onClose }: ExportModalProps) => {
 				value={scale}
 				onChange={handleScaleChange}
 				min={1}
-				max={100}
+				max={64}
 				step={1}
 				className='slider appearance-none w-full h-1 bg-slate-600 dark:bg-slate-400 rounded-full  cursor-pointer my-4'
 			/>
+			<div className='flex flex-wrap gap-2 mb-4 mt-1 justify-around'>
+				{presets.map(({ type, value }) => {
+					const label = type === 'scale' ? `${value}x` : `${value}px`
+					const calculatedScale =
+						type === 'scale' ? value : Math.max(1, Math.ceil(value / height))
+
+					const isSelected = scale === calculatedScale
+
+					return (
+						<button
+							type='button'
+							key={value}
+							onClick={() => setScale(calculatedScale)}
+							className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+								isSelected
+									? 'bg-cyan-500 text-slate-50'
+									: 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-cyan-500 hover:text-slate-50'
+							}`}
+						>
+							{label}
+						</button>
+					)
+				})}
+			</div>
 			<div className='flex justify-between text-sm text-slate-500'>
 				<label htmlFor='scale' className='font-medium'>
 					Escala: <span className='font-bold'>{scale}x</span>
