@@ -3,16 +3,17 @@ import { useContext } from 'react'
 import { describe, expect, it } from 'vitest'
 import { ColorContext } from '@/contexts/color-context'
 import { GridContext } from '@/contexts/grid-context'
+import { HistoryContext } from '@/contexts/history-context'
 import { LayerContext } from '@/contexts/layer-context'
 import { ToolContext } from '@/contexts/tool-context'
-import { UsePixie } from '@/hooks/use-pixie'
+import { usePixie } from '@/hooks/use-pixie'
 import { PixieTestProviders } from '@/spec/test-providers'
 
-describe('UsePixie', () => {
+describe('usePixie', () => {
 	it('draws a pixel on active layer with current primary color', () => {
 		const { result } = renderHook(
 			() => ({
-				pixie: UsePixie(),
+				pixie: usePixie(),
 				layer: useContext(LayerContext),
 				color: useContext(ColorContext),
 			}),
@@ -20,8 +21,8 @@ describe('UsePixie', () => {
 		)
 
 		act(() => {
-			result.current.pixie.handleInteraction({ x: 0, y: 0 })
-			result.current.pixie.endDrawing()
+			result.current.pixie.applyPointInteraction({ x: 0, y: 0 })
+			result.current.pixie.commitDrawing()
 		})
 
 		const currentLayer = result.current.layer.layers.find(
@@ -34,7 +35,7 @@ describe('UsePixie', () => {
 	it('erases a pixel when tool is eraser', () => {
 		const { result } = renderHook(
 			() => ({
-				pixie: UsePixie(),
+				pixie: usePixie(),
 				layer: useContext(LayerContext),
 				tool: useContext(ToolContext),
 			}),
@@ -52,7 +53,7 @@ describe('UsePixie', () => {
 		})
 
 		act(() => {
-			result.current.pixie.handleInteraction({ x: 0, y: 0 })
+			result.current.pixie.applyPointInteraction({ x: 0, y: 0 })
 		})
 
 		const currentLayer = result.current.layer.layers.find(
@@ -65,7 +66,7 @@ describe('UsePixie', () => {
 	it('fills contiguous area when tool is fill', () => {
 		const { result } = renderHook(
 			() => ({
-				pixie: UsePixie(),
+				pixie: usePixie(),
 				layer: useContext(LayerContext),
 				tool: useContext(ToolContext),
 				color: useContext(ColorContext),
@@ -89,7 +90,7 @@ describe('UsePixie', () => {
 		})
 
 		act(() => {
-			result.current.pixie.handleInteraction({ x: 0, y: 0 })
+			result.current.pixie.applyPointInteraction({ x: 0, y: 0 })
 		})
 
 		const currentLayer = result.current.layer.layers.find(
@@ -105,7 +106,7 @@ describe('UsePixie', () => {
 	it('picks visible non-transparent color when tool is picker', () => {
 		const { result } = renderHook(
 			() => ({
-				pixie: UsePixie(),
+				pixie: usePixie(),
 				layer: useContext(LayerContext),
 				tool: useContext(ToolContext),
 				color: useContext(ColorContext),
@@ -137,7 +138,7 @@ describe('UsePixie', () => {
 		})
 
 		act(() => {
-			result.current.pixie.handleInteraction({ x: 0, y: 0 })
+			result.current.pixie.applyPointInteraction({ x: 0, y: 0 })
 		})
 
 		expect(result.current.color.primary).toBe('#abcdef')
@@ -146,7 +147,7 @@ describe('UsePixie', () => {
 	it('applies interpolated drawing coordinates with brush', () => {
 		const { result } = renderHook(
 			() => ({
-				pixie: UsePixie(),
+				pixie: usePixie(),
 				layer: useContext(LayerContext),
 				tool: useContext(ToolContext),
 				color: useContext(ColorContext),
@@ -160,7 +161,7 @@ describe('UsePixie', () => {
 		})
 
 		act(() => {
-			result.current.pixie.handleInterpolatedInteraction([
+			result.current.pixie.applyInterpolatedInteraction([
 				{ x: 1, y: 1 },
 				{ x: 2, y: 1 },
 				{ x: 3, y: 1 },
@@ -179,7 +180,7 @@ describe('UsePixie', () => {
 	it('ignores draw interactions outside grid bounds', () => {
 		const { result } = renderHook(
 			() => ({
-				pixie: UsePixie(),
+				pixie: usePixie(),
 				layer: useContext(LayerContext),
 				grid: useContext(GridContext),
 				tool: useContext(ToolContext),
@@ -193,7 +194,7 @@ describe('UsePixie', () => {
 		})
 
 		act(() => {
-			result.current.pixie.handleInteraction({ x: 9, y: 9 })
+			result.current.pixie.applyPointInteraction({ x: 9, y: 9 })
 		})
 
 		const currentLayer = result.current.layer.layers.find(
@@ -201,5 +202,184 @@ describe('UsePixie', () => {
 		)
 
 		expect(currentLayer?.data[9]).toBeUndefined()
+	})
+
+	it('commits one history entry after a brush stroke', () => {
+		const { result } = renderHook(
+			() => ({
+				pixie: usePixie(),
+				color: useContext(ColorContext),
+				history: useContext(HistoryContext),
+			}),
+			{ wrapper: PixieTestProviders },
+		)
+
+		act(() => {
+			result.current.color.setColor('#123456')
+		})
+
+		act(() => {
+			result.current.pixie.applyPointInteraction({ x: 0, y: 0 })
+		})
+
+		const historyLengthBeforeCommit = result.current.history.history.length
+
+		act(() => {
+			result.current.pixie.commitDrawing()
+		})
+
+		expect(result.current.history.history).toHaveLength(
+			historyLengthBeforeCommit + 1,
+		)
+		expect(result.current.history.history.at(-1)?.[0]?.data[0]?.[0]).toBe(
+			'#123456',
+		)
+	})
+
+	it('commits one history entry after an eraser stroke', () => {
+		const { result } = renderHook(
+			() => ({
+				pixie: usePixie(),
+				layer: useContext(LayerContext),
+				tool: useContext(ToolContext),
+				history: useContext(HistoryContext),
+			}),
+			{ wrapper: PixieTestProviders },
+		)
+
+		act(() => {
+			result.current.layer.setLayers((layers) =>
+				layers.map((layer) => ({
+					...layer,
+					data: [['#000000']],
+				})),
+			)
+			result.current.tool.setTool('eraser')
+		})
+
+		act(() => {
+			result.current.pixie.applyPointInteraction({ x: 0, y: 0 })
+		})
+
+		const historyLengthBeforeCommit = result.current.history.history.length
+
+		act(() => {
+			result.current.pixie.commitDrawing()
+		})
+
+		expect(result.current.history.history).toHaveLength(
+			historyLengthBeforeCommit + 1,
+		)
+		expect(result.current.history.history.at(-1)?.[0]?.data[0]?.[0]).toBe(
+			'transparent',
+		)
+	})
+
+	it('does not commit history when picker finishes', () => {
+		const { result } = renderHook(
+			() => ({
+				pixie: usePixie(),
+				layer: useContext(LayerContext),
+				tool: useContext(ToolContext),
+				history: useContext(HistoryContext),
+			}),
+			{ wrapper: PixieTestProviders },
+		)
+
+		act(() => {
+			result.current.layer.setLayers((layers) =>
+				layers.map((layer) => ({
+					...layer,
+					data: [['#abcdef']],
+				})),
+			)
+			result.current.tool.setTool('picker')
+		})
+
+		const historyLengthBeforePicker = result.current.history.history.length
+
+		act(() => {
+			result.current.pixie.applyPointInteraction({ x: 0, y: 0 })
+			result.current.pixie.commitDrawing()
+		})
+
+		expect(result.current.history.history).toHaveLength(
+			historyLengthBeforePicker,
+		)
+	})
+
+	it('commits shape drawing through commitDrawing options', () => {
+		const { result } = renderHook(
+			() => ({
+				pixie: usePixie(),
+				layer: useContext(LayerContext),
+				tool: useContext(ToolContext),
+				color: useContext(ColorContext),
+				history: useContext(HistoryContext),
+			}),
+			{ wrapper: PixieTestProviders },
+		)
+
+		act(() => {
+			result.current.color.setColor('#ff00ff')
+			result.current.tool.setTool('line')
+		})
+
+		const historyLengthBeforeCommit = result.current.history.history.length
+
+		act(() => {
+			result.current.pixie.commitDrawing({
+				start: { x: 0, y: 0 },
+				end: { x: 2, y: 0 },
+			})
+		})
+
+		const currentLayer = result.current.layer.layers.find(
+			(l) => l.id === result.current.layer.currentLayerId,
+		)
+
+		expect(currentLayer?.data[0]?.[0]).toBe('#ff00ff')
+		expect(currentLayer?.data[0]?.[1]).toBe('#ff00ff')
+		expect(currentLayer?.data[0]?.[2]).toBe('#ff00ff')
+		expect(result.current.history.history).toHaveLength(
+			historyLengthBeforeCommit + 1,
+		)
+	})
+
+	it('does not mutate or commit a locked layer', () => {
+		const { result } = renderHook(
+			() => ({
+				pixie: usePixie(),
+				layer: useContext(LayerContext),
+				history: useContext(HistoryContext),
+			}),
+			{ wrapper: PixieTestProviders },
+		)
+
+		act(() => {
+			result.current.layer.setLayers((layers) =>
+				layers.map((layer) => ({
+					...layer,
+					isLocked: true,
+					data: [['#000000']],
+				})),
+			)
+		})
+
+		const historyLengthBeforeCommit = result.current.history.history.length
+
+		act(() => {
+			result.current.pixie.applyPointInteraction({ x: 0, y: 0 })
+			result.current.pixie.commitDrawing()
+		})
+
+		const currentLayer = result.current.layer.layers.find(
+			(l) => l.id === result.current.layer.currentLayerId,
+		)
+
+		expect(currentLayer?.data[0]?.[0]).toBe('#000000')
+		expect(result.current.history.history).toHaveLength(
+			historyLengthBeforeCommit,
+		)
 	})
 })

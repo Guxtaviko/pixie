@@ -9,6 +9,7 @@ const canvasContextMock = {
 	moveTo: () => {},
 	lineTo: () => {},
 	stroke: () => {},
+	strokeRect: () => {},
 	fillText: () => {},
 	set fillStyle(_value: string) {},
 	set strokeStyle(_value: string) {},

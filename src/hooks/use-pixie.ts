@@ -9,10 +9,16 @@ import { useFillTool } from '@/hooks/tools/use-fill-tool'
 import { usePickerTool } from '@/hooks/tools/use-picker-tool'
 import { useShapeTool } from '@/hooks/tools/use-shape-tool'
 import { useSafeContext } from '@/hooks/use-safe-context'
-import type { Coordinates } from '@/types'
+import type { Coordinates, Layer } from '@/types'
 import { getToolBehavior, isShapeTool } from '@/utils/tools'
 
-export function UsePixie() {
+type CommitDrawingOptions = {
+	start?: Coordinates
+	end?: Coordinates
+	shiftKey?: boolean
+}
+
+export function usePixie() {
 	const {
 		tool,
 		brushSize,
@@ -31,7 +37,6 @@ export function UsePixie() {
 	const isLayerDrawable = layer && !layer.isLocked
 
 	const getLayerData = useCallback(() => {
-		// Return a deep copy of the layer data to avoid direct mutations
 		return layer?.data.map((row) => row?.slice()) || []
 	}, [layer])
 
@@ -41,6 +46,31 @@ export function UsePixie() {
 		},
 		[width, height],
 	)
+
+	const buildLayerHistorySnapshot = useCallback(
+		(nextLayerData: string[][]): Layer[] => {
+			return layers.map((l) =>
+				l.id === layer?.id ? { ...l, data: nextLayerData } : l,
+			)
+		},
+		[layers, layer],
+	)
+
+	const shouldCommitHistory = useCallback(() => {
+		return getToolBehavior(tool) === 'continuous' && Boolean(isLayerDrawable)
+	}, [tool, isLayerDrawable])
+
+	const commitContinuousDrawing = useCallback(() => {
+		if (!shouldCommitHistory()) return
+
+		const nextLayerData = getLayerData()
+		saveToHistory(buildLayerHistorySnapshot(nextLayerData))
+	}, [
+		buildLayerHistorySnapshot,
+		getLayerData,
+		saveToHistory,
+		shouldCommitHistory,
+	])
 
 	const { drawPixel, drawPixels } = useBrushTool({
 		layer,
@@ -98,7 +128,7 @@ export function UsePixie() {
 		[tool, shapeType, getShapePreviewPixels],
 	)
 
-	const handleInteraction = useCallback(
+	const applyPointInteraction = useCallback(
 		({ x, y }: Coordinates) => {
 			switch (tool) {
 				case 'brush':
@@ -120,7 +150,7 @@ export function UsePixie() {
 		[tool, drawPixel, floodFill, pickColor],
 	)
 
-	const handleInterpolatedInteraction = useCallback(
+	const applyInterpolatedInteraction = useCallback(
 		(coords: Coordinates[]) => {
 			switch (tool) {
 				case 'brush':
@@ -136,29 +166,34 @@ export function UsePixie() {
 		[tool, drawPixels],
 	)
 
-	const endDrawing = useCallback(
-		(start?: Coordinates, end?: Coordinates, shiftKey = false) => {
-			if (isShapeTool(tool) && start && end) {
-				const shape = tool === 'line' ? 'line' : shapeType
-				drawShape(shape, start, end, shiftKey)
+	const commitShapeDrawing = useCallback(
+		(start: Coordinates, end: Coordinates, shiftKey = false) => {
+			if (!isShapeTool(tool)) return
+
+			const shape = tool === 'line' ? 'line' : shapeType
+			drawShape(shape, start, end, shiftKey)
+		},
+		[tool, drawShape, shapeType],
+	)
+
+	const commitDrawing = useCallback(
+		(options: CommitDrawingOptions = {}) => {
+			const { start, end, shiftKey = false } = options
+
+			if (start && end && isShapeTool(tool)) {
+				commitShapeDrawing(start, end, shiftKey)
 				return
 			}
 
-			const behavior = getToolBehavior(tool)
-			if (behavior === 'click') return
-
-			const newLayers = layers.map((l) =>
-				l.id === layer?.id ? { ...l, data: getLayerData() } : l,
-			)
-			saveToHistory(newLayers)
+			commitContinuousDrawing()
 		},
-		[layers, layer, getLayerData, saveToHistory, tool, drawShape, shapeType],
+		[tool, commitShapeDrawing, commitContinuousDrawing],
 	)
 
 	return {
-		handleInteraction,
-		handleInterpolatedInteraction,
-		endDrawing,
+		applyPointInteraction,
+		applyInterpolatedInteraction,
+		commitDrawing,
 		getShapePreview,
 	}
 }
