@@ -9,6 +9,7 @@ import { useFillTool } from '@/hooks/tools/use-fill-tool'
 import { usePickerTool } from '@/hooks/tools/use-picker-tool'
 import { useShapeTool } from '@/hooks/tools/use-shape-tool'
 import { useSafeContext } from '@/hooks/use-safe-context'
+import { useToolHotkeys } from '@/hooks/use-tool-hotkeys'
 import type { Coordinates, Layer } from '@/types'
 import { getToolBehavior, isShapeTool } from '@/utils/tools'
 
@@ -22,6 +23,7 @@ export function usePixie() {
 	const {
 		tool,
 		brushSize,
+		setBrushSize,
 		brushShape,
 		shapeMode,
 		shapeType,
@@ -84,6 +86,8 @@ export function usePixie() {
 		updateLayer,
 		validateCoordinates,
 	})
+
+	useToolHotkeys({ tool, setBrushSize })
 
 	const { floodFill } = useFillTool({
 		layer,

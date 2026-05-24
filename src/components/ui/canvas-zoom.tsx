@@ -2,6 +2,7 @@ import { ZoomInIcon, ZoomOutIcon } from 'lucide-react'
 import type { SetStateAction } from 'react'
 import { Button } from '@/components/ui/button'
 import { DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '@/config/settings'
+import { UseHotkey } from '@/hooks/use-hotkey'
 
 interface CanvasZoomProps {
 	zoom: number
@@ -15,6 +16,33 @@ export const CanvasZoom = ({ zoom, setZoom }: CanvasZoomProps) => {
 	const decreaseZoom = () => {
 		setZoom((prevZoom) => Math.max(prevZoom - ZOOM_STEP, MIN_ZOOM))
 	}
+
+	UseHotkey(
+		'ctrl+-',
+		(e) => {
+			e.preventDefault()
+			decreaseZoom()
+		},
+		true,
+	)
+
+	UseHotkey(
+		'ctrl+=',
+		(e) => {
+			e.preventDefault()
+			increaseZoom()
+		},
+		true,
+	)
+
+	UseHotkey(
+		'ctrl++',
+		(e) => {
+			e.preventDefault()
+			increaseZoom()
+		},
+		true,
+	)
 
 	return (
 		<div className='absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 border section rounded-full px-3 py-1.5 backdrop-blur-xs'>

@@ -1,4 +1,4 @@
-import { createContext } from 'react'
+import { createContext, type SetStateAction } from 'react'
 import {
 	DEFAULT_BRUSH_SHAPE,
 	DEFAULT_BRUSH_SIZE,
@@ -11,7 +11,7 @@ type ToolContextType = {
 	tool: Tool
 	setTool: (tool: Tool) => void
 	brushSize: number
-	setBrushSize: (size: number) => void
+	setBrushSize: (size: SetStateAction<number>) => void
 	brushShape: BrushShape
 	setBrushShape: (shape: BrushShape) => void
 	shapeMode: ShapeMode

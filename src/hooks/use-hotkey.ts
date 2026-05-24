@@ -7,8 +7,15 @@ export function UseHotkey(
 ) {
 	const checkKey = useCallback(
 		(e: KeyboardEvent) => {
-			const modifiers = key.split('+').map((k) => k.trim().toLowerCase())
-			const keyPart = modifiers.pop() // The last part is the main key
+			let keyStr = key.toLowerCase()
+			let isPlus = false
+			if (keyStr.endsWith('++')) {
+				isPlus = true
+				keyStr = `${keyStr.slice(0, -2)}+plus`
+			}
+			const modifiers = keyStr.split('+').map((k) => k.trim())
+			const keyPart = isPlus ? '+' : modifiers.pop()
+
 			const keyMatch =
 				keyPart === e.key.toLowerCase() ||
 				(keyPart === 'space' && e.key === ' ')

@@ -1,8 +1,11 @@
 import type { Tool, ToolBehavior } from '@/types'
 
-export const TOOL_CONFIG: Record<Tool, { behavior: ToolBehavior }> = {
-	brush: { behavior: 'continuous' },
-	eraser: { behavior: 'continuous' },
+export const TOOL_CONFIG: Record<
+	Tool,
+	{ behavior: ToolBehavior; usesBrushSize?: boolean }
+> = {
+	brush: { behavior: 'continuous', usesBrushSize: true },
+	eraser: { behavior: 'continuous', usesBrushSize: true },
 	fill: { behavior: 'click' },
 	picker: { behavior: 'click' },
 	line: { behavior: 'drag-to-draw' },
