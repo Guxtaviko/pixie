@@ -1,6 +1,7 @@
 import type { SetStateAction } from 'react'
 import { useEffect } from 'react'
 import { MAX_BRUSH_SIZE, MIN_BRUSH_SIZE } from '@/config/settings'
+import { UseHotkey } from '@/hooks/use-hotkey'
 import type { Tool } from '@/types'
 import { TOOL_CONFIG } from '@/utils/tools'
 
@@ -10,6 +11,24 @@ type UseToolHotkeysProps = {
 }
 
 export function useToolHotkeys({ tool, setBrushSize }: UseToolHotkeysProps) {
+	UseHotkey(
+		'[',
+		() => {
+			if (!TOOL_CONFIG[tool]?.usesBrushSize) return
+			setBrushSize((prev) => Math.max(prev - 1, MIN_BRUSH_SIZE))
+		},
+		true, // allow repeat
+	)
+
+	UseHotkey(
+		']',
+		() => {
+			if (!TOOL_CONFIG[tool]?.usesBrushSize) return
+			setBrushSize((prev) => Math.min(prev + 1, MAX_BRUSH_SIZE))
+		},
+		true, // allow repeat
+	)
+
 	useEffect(() => {
 		const handleWheel = (e: WheelEvent) => {
 			if (!e.ctrlKey) return
