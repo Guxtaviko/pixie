@@ -98,6 +98,7 @@ describe('useSelectTool', () => {
 			const newData = getLayerData()
 			if (!newData[2]) newData[2] = []
 			newData[2][2] = '#ff0000'
+			// biome-ignore lint/style/noNonNullAssertion: Test ensures activeLayer is not null
 			result.current.layerContext.updateLayer(result.current.activeLayer!.id, {
 				data: newData,
 			})
@@ -128,6 +129,7 @@ describe('useSelectTool', () => {
 			)
 		})
 
+		// biome-ignore lint/style/noNonNullAssertion: Test ensures selectionState is not null
 		const selState = result.current.selectTool.selectionState!
 		expect(selState.pixels.length).toBe(1)
 		expect(selState.pixels[0]).toEqual({
@@ -151,6 +153,7 @@ describe('useSelectTool', () => {
 			const newData = getLayerData()
 			if (!newData[2]) newData[2] = []
 			newData[2][2] = '#ff0000'
+			// biome-ignore lint/style/noNonNullAssertion: Test ensures activeLayer is not null
 			result.current.layerContext.updateLayer(result.current.activeLayer!.id, {
 				data: newData,
 			})
@@ -190,6 +193,7 @@ describe('useSelectTool', () => {
 		})
 
 		// Transform should reflect the drag dx=2, dy=2
+		// biome-ignore lint/style/noNonNullAssertion: Test ensures selectionState is not null
 		const selState = result.current.selectTool.selectionState!
 		expect(selState.transform).toEqual({
 			dx: 2,
