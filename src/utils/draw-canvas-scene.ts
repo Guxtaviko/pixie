@@ -1,5 +1,5 @@
 import { COORDS_DEBUG, DARK_CHECKER, LIGHT_CHECKER } from '@/config/settings'
-import type { BrushShape, Coordinates, Layer } from '@/types'
+import type { BrushShape, Coordinates, Layer, SelectionState } from '@/types'
 import { getBrushFootprint } from '@/utils/brush'
 import { colorBrightness } from '@/utils/color-brightness'
 import type { ShapePixels } from '@/utils/geometry'
@@ -20,6 +20,7 @@ type DrawCanvasSceneOptions = {
 	primary: string
 	secondary: string
 	useSecondaryFill: boolean
+	selectionState?: SelectionState | null
 }
 
 export function drawCanvasScene({
@@ -38,6 +39,7 @@ export function drawCanvasScene({
 	primary,
 	secondary,
 	useSecondaryFill,
+	selectionState,
 }: DrawCanvasSceneOptions) {
 	const ctx = canvas?.getContext('2d')
 	if (!canvas || !ctx) return
@@ -107,6 +109,28 @@ export function drawCanvasScene({
 		drawPreviewPixels(shapePreview.fill, useSecondaryFill ? secondary : primary)
 
 		ctx.globalAlpha = 1
+	}
+
+	if (selectionState) {
+		// Extracted floating pixels
+		if (selectionState.pixels.length > 0) {
+			for (const p of selectionState.pixels) {
+				const finalX =
+					selectionState.x + p.relativeX + selectionState.transform.dx
+				const finalY =
+					selectionState.y + p.relativeY + selectionState.transform.dy
+
+				if (finalX >= 0 && finalX < width && finalY >= 0 && finalY < height) {
+					ctx.fillStyle = p.color
+					ctx.fillRect(
+						finalX * pixelSize,
+						finalY * pixelSize,
+						pixelSize,
+						pixelSize,
+					)
+				}
+			}
+		}
 	}
 
 	if (hoverCoord && (tool === 'brush' || tool === 'eraser')) {

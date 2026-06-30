@@ -6,6 +6,7 @@ import {
 	Minus as MinusIcon,
 	PaintBucket as PaintIcon,
 	Pipette as PickerIcon,
+	SquareDashedMousePointer as SelectIcon,
 	Square as SquareIcon,
 	Trash2 as TrashIcon,
 } from 'lucide-react'
@@ -39,6 +40,7 @@ export const ToolBar = () => {
 	UseHotkey('i', () => setTool('picker'))
 	UseHotkey('l', () => setTool('line'))
 	UseHotkey('u', () => setTool('shape'))
+	UseHotkey('s', () => setTool('select'))
 
 	const toggleColorSelector = () => setIsColorSelectorOpen(!isColorSelectorOpen)
 	const closeColorSelector = () => setIsColorSelectorOpen(false)
@@ -50,6 +52,7 @@ export const ToolBar = () => {
 		{ label: 'Borracha', icon: EraserIcon, hotKey: 'e', tool: 'eraser' },
 		{ label: 'Balde', icon: PaintIcon, hotKey: 'g', tool: 'fill' },
 		{ label: 'Conta-gotas', icon: PickerIcon, hotKey: 'i', tool: 'picker' },
+		{ label: 'Selecionar', icon: SelectIcon, hotKey: 's', tool: 'select' },
 		{ label: 'Linha', icon: MinusIcon, hotKey: 'l', tool: 'line' },
 		{ label: 'Forma', icon: ShapeIcon, hotKey: 'u', tool: 'shape' },
 	]

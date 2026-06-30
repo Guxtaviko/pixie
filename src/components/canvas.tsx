@@ -11,6 +11,7 @@ import { useCanvasAutoFit } from '@/hooks/use-canvas-auto-fit'
 import { useCanvasPointerDrawing } from '@/hooks/use-canvas-pointer-drawing'
 import { usePixie } from '@/hooks/use-pixie'
 import { drawCanvasScene } from '@/utils/draw-canvas-scene'
+import { drawSelectionMarquee } from '@/utils/draw-selection-marquee'
 import { isShapeTool } from '@/utils/tools'
 
 export const Canvas = () => {
@@ -24,12 +25,15 @@ export const Canvas = () => {
 	const [zoom, setZoom] = useLocalStorage<number>('canvas-zoom', DEFAULT_ZOOM)
 	const containerRef = useRef<HTMLDivElement>(null)
 	const canvasRef = useRef<HTMLCanvasElement>(null)
+	const marqueeCanvasRef = useRef<HTMLCanvasElement>(null)
 
 	const {
 		applyPointInteraction,
 		applyInterpolatedInteraction,
 		commitDrawing,
 		getShapePreview,
+		selectionState,
+		pointerHandlers: customPointerHandlers,
 	} = usePixie()
 
 	useCanvasAutoFit({
@@ -47,6 +51,9 @@ export const Canvas = () => {
 			applyPointInteraction,
 			applyInterpolatedInteraction,
 			commitDrawing,
+			onPointerDown: customPointerHandlers.onPointerDown,
+			onPointerMove: customPointerHandlers.onPointerMove,
+			onPointerUp: customPointerHandlers.onPointerUp,
 		})
 
 	const canvasWidth = width * pixelSize
@@ -76,6 +83,7 @@ export const Canvas = () => {
 			primary,
 			secondary,
 			useSecondaryFill,
+			selectionState,
 		})
 	}, [
 		width,
@@ -92,7 +100,29 @@ export const Canvas = () => {
 		primary,
 		secondary,
 		useSecondaryFill,
+		selectionState,
 	])
+
+	useEffect(() => {
+		let frameId = 0
+
+		const renderSelectionMarquee = () => {
+			drawSelectionMarquee({
+				canvas: marqueeCanvasRef.current,
+				pixelSize,
+				theme,
+				selectionState,
+			})
+
+			if (!selectionState) return
+
+			frameId = window.requestAnimationFrame(renderSelectionMarquee)
+		}
+
+		renderSelectionMarquee()
+
+		return () => window.cancelAnimationFrame(frameId)
+	}, [pixelSize, theme, selectionState])
 
 	return (
 		<div
@@ -109,6 +139,12 @@ export const Canvas = () => {
 					height={canvasHeight}
 					{...pointerHandlers}
 					className='block bg-slate-950'
+				/>
+				<canvas
+					ref={marqueeCanvasRef}
+					width={canvasWidth}
+					height={canvasHeight}
+					className='pointer-events-none absolute inset-0 block'
 				/>
 			</div>
 			<CanvasZoom zoom={zoom} setZoom={setZoom} />

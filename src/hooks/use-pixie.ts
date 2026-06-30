@@ -7,6 +7,7 @@ import { ToolContext } from '@/contexts/tool-context'
 import { useBrushTool } from '@/hooks/tools/use-brush-tool'
 import { useFillTool } from '@/hooks/tools/use-fill-tool'
 import { usePickerTool } from '@/hooks/tools/use-picker-tool'
+import { useSelectTool } from '@/hooks/tools/use-select-tool'
 import { useShapeTool } from '@/hooks/tools/use-shape-tool'
 import { useSafeContext } from '@/hooks/use-safe-context'
 import { useToolHotkeys } from '@/hooks/use-tool-hotkeys'
@@ -98,6 +99,23 @@ export function usePixie() {
 		updateLayer,
 		saveToHistory,
 		validateCoordinates,
+	})
+
+	const {
+		selectionState,
+		handlePointerDown: onSelectPointerDown,
+		handlePointerMove: onSelectPointerMove,
+		handlePointerUp: onSelectPointerUp,
+	} = useSelectTool({
+		tool,
+		layer,
+		isLayerDrawable: isLayerDrawable || false,
+		width,
+		height,
+		getLayerData,
+		updateLayer,
+		saveToHistory,
+		layers,
 	})
 
 	const { pickColor } = usePickerTool({
@@ -199,5 +217,11 @@ export function usePixie() {
 		applyInterpolatedInteraction,
 		commitDrawing,
 		getShapePreview,
+		selectionState,
+		pointerHandlers: {
+			onPointerDown: onSelectPointerDown,
+			onPointerMove: onSelectPointerMove,
+			onPointerUp: onSelectPointerUp,
+		},
 	}
 }

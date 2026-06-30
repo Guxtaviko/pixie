@@ -10,6 +10,7 @@ export const TOOL_CONFIG: Record<
 	picker: { behavior: 'click' },
 	line: { behavior: 'drag-to-draw' },
 	shape: { behavior: 'drag-to-draw' },
+	select: { behavior: 'custom' },
 }
 
 export const isShapeTool = (tool: Tool) =>

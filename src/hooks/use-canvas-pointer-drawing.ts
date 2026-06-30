@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Coordinates, Tool } from '@/types'
 import { getCanvasCoordinates } from '@/utils/canvas-coordinates'
 import { interpolateCoordinates } from '@/utils/interpolate-coordinates'
-import { isShapeTool } from '@/utils/tools'
+import { getToolBehavior, isShapeTool } from '@/utils/tools'
 
 type CommitDrawingOptions = {
 	start?: Coordinates
@@ -18,6 +18,9 @@ type UseCanvasPointerDrawingProps = {
 	applyPointInteraction: (coords: Coordinates) => void
 	applyInterpolatedInteraction: (coords: Coordinates[]) => void
 	commitDrawing: (options?: CommitDrawingOptions) => void
+	onPointerDown?: (e: ReactPointerEvent, coords: Coordinates) => void
+	onPointerMove?: (e: ReactPointerEvent, coords: Coordinates | null) => void
+	onPointerUp?: (e?: ReactPointerEvent) => void
 }
 
 export function useCanvasPointerDrawing({
@@ -27,6 +30,9 @@ export function useCanvasPointerDrawing({
 	applyPointInteraction,
 	applyInterpolatedInteraction,
 	commitDrawing,
+	onPointerDown,
+	onPointerMove,
+	onPointerUp,
 }: UseCanvasPointerDrawingProps) {
 	const [isDrawing, setIsDrawing] = useState<boolean>(false)
 	const [coordsBuffer, setCoordsBuffer] = useState<Coordinates[]>([])
@@ -54,7 +60,9 @@ export function useCanvasPointerDrawing({
 		setHoverCoord(coords)
 		setStartCoord(coords)
 
-		if (isShapeTool(tool)) return
+		if (onPointerDown) onPointerDown(e, coords)
+
+		if (isShapeTool(tool) || getToolBehavior(tool) === 'custom') return
 
 		applyPointInteraction(coords)
 	}
@@ -62,6 +70,8 @@ export function useCanvasPointerDrawing({
 	const handleMove = (e: ReactPointerEvent<HTMLCanvasElement>) => {
 		const coords = getCoordinates(e)
 		setHoverCoord(coords)
+
+		if (onPointerMove) onPointerMove(e, coords)
 
 		if (!isDrawing) return
 
@@ -74,7 +84,7 @@ export function useCanvasPointerDrawing({
 		setIsShiftPressed(e.shiftKey)
 
 		if (!coords) return
-		if (isShapeTool(tool)) return
+		if (isShapeTool(tool) || getToolBehavior(tool) === 'custom') return
 
 		setCoordsBuffer((prev) =>
 			prev.find((c) => c.x === coords.x && c.y === coords.y)
@@ -100,9 +110,14 @@ export function useCanvasPointerDrawing({
 		activePointerId.current = null
 
 		setIsDrawing(false)
+
+		if (onPointerUp) onPointerUp(e)
+
 		if (!isDrawing) return
 
 		if (coordsBuffer.length) setCoordsBuffer([])
+
+		if (getToolBehavior(tool) === 'custom') return
 
 		const isValidShape = isShapeTool(tool) && startCoord && hoverCoord
 		commitDrawing(

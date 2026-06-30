@@ -52,11 +52,16 @@ describe('ToolBar', () => {
 			</PixieTestProviders>,
 		)
 
+		expect(
+			screen.getByRole('button', { name: 'Selecionar' }),
+		).toBeInTheDocument()
 		expect(screen.getByRole('button', { name: 'Pincel' })).toBeInTheDocument()
 		expect(screen.getByRole('button', { name: 'Borracha' })).toBeInTheDocument()
 		expect(screen.getByRole('button', { name: 'Balde' })).toBeInTheDocument()
 		expect(
 			screen.getByRole('button', { name: 'Conta-gotas' }),
 		).toBeInTheDocument()
+		expect(screen.getByRole('button', { name: 'Linha' })).toBeInTheDocument()
+		expect(screen.getByRole('button', { name: 'Forma' })).toBeInTheDocument()
 	})
 })
