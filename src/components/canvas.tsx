@@ -135,6 +135,7 @@ export const Canvas = () => {
 			>
 				<canvas
 					ref={canvasRef}
+					id='drawing-canvas'
 					width={canvasWidth}
 					height={canvasHeight}
 					{...pointerHandlers}

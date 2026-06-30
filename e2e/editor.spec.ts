@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 const readTopLeftPixel = async (page: import('@playwright/test').Page) => {
 	return page.evaluate(() => {
-		const canvas = document.querySelector('canvas')
+		const canvas = document.querySelector('#drawing-canvas')
 		if (!(canvas instanceof HTMLCanvasElement)) return null
 
 		const ctx = canvas.getContext('2d')
@@ -25,7 +25,7 @@ test('draw + undo + redo flow works', async ({ page }) => {
 	const before = await readTopLeftPixel(page)
 	await expect(before).not.toBeNull()
 
-	const canvas = page.locator('canvas')
+	const canvas = page.locator('#drawing-canvas')
 	const box = await canvas.boundingBox()
 	if (!box) throw new Error('Canvas bounding box not found')
 
@@ -44,7 +44,7 @@ test('draw + undo + redo flow works', async ({ page }) => {
 })
 
 test('drag drawing paints multiple pixels', async ({ page }) => {
-	const canvas = page.locator('canvas')
+	const canvas = page.locator('#drawing-canvas')
 	const box = await canvas.boundingBox()
 	if (!box) throw new Error('Canvas bounding box not found')
 
@@ -78,7 +78,7 @@ test('drag drawing paints multiple pixels', async ({ page }) => {
 })
 
 test('brush size and shape changes footprint', async ({ page }) => {
-	const canvas = page.locator('canvas')
+	const canvas = page.locator('#drawing-canvas')
 	const box = await canvas.boundingBox()
 	if (!box) throw new Error('Canvas bounding box not found')
 
